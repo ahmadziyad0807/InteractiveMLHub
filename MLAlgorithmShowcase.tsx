@@ -2756,12 +2756,12 @@ print(f"\\nClassification Report:\\n{classification_report(y_test, y_pred)}")`}
       <footer className="mt-16 border-t bg-gradient-to-r from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-2 text-gray-700">
-              <span className="text-sm">Developed by</span>
-              <span className="font-semibold text-blue-600">Ahmad Ziyad</span>
-            </div>
-            
             <div className="flex items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-2 text-gray-700">
+                <span className="text-sm">Developed by</span>
+                <span className="font-semibold text-blue-600">Ahmad Ziyad</span>
+              </div>
+              
               <a 
                 href="https://www.linkedin.com/in/ahmadziyad/" 
                 target="_blank" 

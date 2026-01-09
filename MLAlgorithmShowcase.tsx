@@ -475,7 +475,7 @@ export const MLShowcase = () => {
                       <div className="flex-1">
                         <Slider
                           value={[knowledgeLevel]}
-                          onValueChange={(value) => setKnowledgeLevel(value[0])}
+                          onValueChange={(value: number[]) => setKnowledgeLevel(value[0])}
                           min={1}
                           max={5}
                           step={1}
@@ -611,7 +611,7 @@ export const MLShowcase = () => {
                     <Label>Max Depth: {xgbParams.maxDepth}</Label>
                     <Slider
                       value={[xgbParams.maxDepth]}
-                      onValueChange={(v) => setXgbParams({...xgbParams, maxDepth: v[0]})}
+                      onValueChange={(v: number[]) => setXgbParams({...xgbParams, maxDepth: v[0]})}
                       min={1}
                       max={10}
                       step={1}
@@ -622,7 +622,7 @@ export const MLShowcase = () => {
                     <Label>Learning Rate: {xgbParams.learningRate}</Label>
                     <Slider
                       value={[xgbParams.learningRate * 10]}
-                      onValueChange={(v) => setXgbParams({...xgbParams, learningRate: v[0] / 10})}
+                      onValueChange={(v: number[]) => setXgbParams({...xgbParams, learningRate: v[0] / 10})}
                       min={0.1}
                       max={10}
                       step={0.1}
@@ -633,7 +633,7 @@ export const MLShowcase = () => {
                     <Label>N Estimators: {xgbParams.nEstimators}</Label>
                     <Slider
                       value={[xgbParams.nEstimators]}
-                      onValueChange={(v) => setXgbParams({...xgbParams, nEstimators: v[0]})}
+                      onValueChange={(v: number[]) => setXgbParams({...xgbParams, nEstimators: v[0]})}
                       min={10}
                       max={500}
                       step={10}
@@ -644,7 +644,7 @@ export const MLShowcase = () => {
                     <Label>Subsample: {xgbParams.subsample}</Label>
                     <Slider
                       value={[xgbParams.subsample * 10]}
-                      onValueChange={(v) => setXgbParams({...xgbParams, subsample: v[0] / 10})}
+                      onValueChange={(v: number[]) => setXgbParams({...xgbParams, subsample: v[0] / 10})}
                       min={5}
                       max={10}
                       step={1}
@@ -665,7 +665,7 @@ export const MLShowcase = () => {
               </div>
 
               {/* Collapsible Python Code */}
-              <Collapsible open={codeOpen.xgboost} onOpenChange={(open) => setCodeOpen({...codeOpen, xgboost: open})}>
+              <Collapsible open={codeOpen.xgboost} onOpenChange={(open: boolean) => setCodeOpen({...codeOpen, xgboost: open})}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -1059,7 +1059,7 @@ print("Feature Importance:", importance)`}
                     <Label>Number of Neighbors (k): {knnParams.nNeighbors}</Label>
                     <Slider
                       value={[knnParams.nNeighbors]}
-                      onValueChange={(v) => setKnnParams({...knnParams, nNeighbors: v[0]})}
+                      onValueChange={(v: number[]) => setKnnParams({...knnParams, nNeighbors: v[0]})}
                       min={1}
                       max={20}
                       step={1}
@@ -1106,7 +1106,7 @@ print("Feature Importance:", importance)`}
               </div>
 
               {/* Collapsible Python Code */}
-              <Collapsible open={codeOpen.knn} onOpenChange={(open) => setCodeOpen({...codeOpen, knn: open})}>
+              <Collapsible open={codeOpen.knn} onOpenChange={(open: boolean) => setCodeOpen({...codeOpen, knn: open})}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -1473,7 +1473,7 @@ print(f"Confusion Matrix:\\n{conf_matrix}")`}
                     <Label>Learning Rate: {linearParams.learningRate}</Label>
                     <Slider
                       value={[linearParams.learningRate * 100]}
-                      onValueChange={(v) => setLinearParams({...linearParams, learningRate: v[0] / 100})}
+                      onValueChange={(v: number[]) => setLinearParams({...linearParams, learningRate: v[0] / 100})}
                       min={0.1}
                       max={10}
                       step={0.1}
@@ -1484,7 +1484,7 @@ print(f"Confusion Matrix:\\n{conf_matrix}")`}
                     <Label>Epochs: {linearParams.epochs}</Label>
                     <Slider
                       value={[linearParams.epochs]}
-                      onValueChange={(v) => setLinearParams({...linearParams, epochs: v[0]})}
+                      onValueChange={(v: number[]) => setLinearParams({...linearParams, epochs: v[0]})}
                       min={10}
                       max={1000}
                       step={10}
@@ -1495,7 +1495,7 @@ print(f"Confusion Matrix:\\n{conf_matrix}")`}
                     <Label>Regularization (α): {linearParams.regularization}</Label>
                     <Slider
                       value={[linearParams.regularization * 100]}
-                      onValueChange={(v) => setLinearParams({...linearParams, regularization: v[0] / 100})}
+                      onValueChange={(v: number[]) => setLinearParams({...linearParams, regularization: v[0] / 100})}
                       min={0.1}
                       max={10}
                       step={0.1}
@@ -1516,7 +1516,7 @@ print(f"Confusion Matrix:\\n{conf_matrix}")`}
               </div>
 
               {/* Collapsible Python Code */}
-              <Collapsible open={codeOpen.linear} onOpenChange={(open) => setCodeOpen({...codeOpen, linear: open})}>
+              <Collapsible open={codeOpen.linear} onOpenChange={(open: boolean) => setCodeOpen({...codeOpen, linear: open})}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -1953,7 +1953,7 @@ print(f"Weights: {linear_model.coef_}")`}
                     <Label>N Estimators: {rfParams.nEstimators}</Label>
                     <Slider
                       value={[rfParams.nEstimators]}
-                      onValueChange={(v) => setRfParams({...rfParams, nEstimators: v[0]})}
+                      onValueChange={(v: number[]) => setRfParams({...rfParams, nEstimators: v[0]})}
                       min={10}
                       max={500}
                       step={10}
@@ -1964,7 +1964,7 @@ print(f"Weights: {linear_model.coef_}")`}
                     <Label>Max Depth: {rfParams.maxDepth}</Label>
                     <Slider
                       value={[rfParams.maxDepth]}
-                      onValueChange={(v) => setRfParams({...rfParams, maxDepth: v[0]})}
+                      onValueChange={(v: number[]) => setRfParams({...rfParams, maxDepth: v[0]})}
                       min={1}
                       max={30}
                       step={1}
@@ -1975,7 +1975,7 @@ print(f"Weights: {linear_model.coef_}")`}
                     <Label>Min Samples Split: {rfParams.minSamplesSplit}</Label>
                     <Slider
                       value={[rfParams.minSamplesSplit]}
-                      onValueChange={(v) => setRfParams({...rfParams, minSamplesSplit: v[0]})}
+                      onValueChange={(v: number[]) => setRfParams({...rfParams, minSamplesSplit: v[0]})}
                       min={2}
                       max={20}
                       step={1}
@@ -2009,7 +2009,7 @@ print(f"Weights: {linear_model.coef_}")`}
               </div>
 
               {/* Collapsible Python Code */}
-              <Collapsible open={codeOpen.rf} onOpenChange={(open) => setCodeOpen({...codeOpen, rf: open})}>
+              <Collapsible open={codeOpen.rf} onOpenChange={(open: boolean) => setCodeOpen({...codeOpen, rf: open})}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -2380,7 +2380,7 @@ print("Feature Importance:", importance)`}
                     <Label>C (Regularization): {svmParams.c}</Label>
                     <Slider
                       value={[svmParams.c * 10]}
-                      onValueChange={(v) => setSvmParams({...svmParams, c: v[0] / 10})}
+                      onValueChange={(v: number[]) => setSvmParams({...svmParams, c: v[0] / 10})}
                       min={1}
                       max={100}
                       step={1}
@@ -2413,7 +2413,7 @@ print("Feature Importance:", importance)`}
               </div>
 
               {/* Collapsible Python Code */}
-              <Collapsible open={codeOpen.svm} onOpenChange={(open) => setCodeOpen({...codeOpen, svm: open})}>
+              <Collapsible open={codeOpen.svm} onOpenChange={(open: boolean) => setCodeOpen({...codeOpen, svm: open})}>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">

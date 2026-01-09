@@ -23,10 +23,12 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "*.tsx", "components/**/*.ts", "components/**/*.tsx", "lib/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "*.tsx", "components/**/*.ts", "components/**/*.tsx", "lib/**/*.ts", "lib/**/*.tsx"],
   "exclude": ["node_modules", "dist", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

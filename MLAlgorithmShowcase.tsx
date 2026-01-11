@@ -139,6 +139,29 @@ export const MLShowcase = () => {
     svm: false
   });
 
+  // Collapsible state for ML Pipelines section
+  const [mlPipelinesOpen, setMlPipelinesOpen] = useState(false);
+
+  // Collapsible state for ML Production-Ready Pipelines sub-section
+  const [mlProductionPipelinesOpen, setMlProductionPipelinesOpen] = useState(false);
+
+  // Collapsible states for individual code examples in ML Production-Ready Pipelines
+  const [productionCodeOpen, setProductionCodeOpen] = useState({
+    sklearn: false,
+    mlflow: false,
+    docker: false
+  });
+
+  // Collapsible state for AWS ML Pipelines section
+  const [awsPipelinesOpen, setAwsPipelinesOpen] = useState(false);
+
+  // Collapsible state for ML Algorithms section
+  const [mlAlgorithmsOpen, setMlAlgorithmsOpen] = useState(true); // Default to open
+
+  // Image upload state - Hidden for future enhancement
+  // const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  // const [imageFile, setImageFile] = useState<File | null>(null);
+
   // XGBoost state
   const [xgbParams, setXgbParams] = useState({
     maxDepth: 3,
@@ -386,6 +409,75 @@ export const MLShowcase = () => {
     }, 2500);
   };
 
+  // Image upload functions - Hidden for future enhancement
+  /*
+  // Image upload handler
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      processImageFile(file);
+    }
+  };
+
+  // Process image file (shared function for upload and drag-drop)
+  const processImageFile = (file: File) => {
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a valid image file (JPEG, PNG, GIF, or WebP)');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      alert('Please upload an image smaller than 5MB');
+      return;
+    }
+    
+    setImageFile(file);
+    
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setUploadedImage(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const files = event.dataTransfer.files;
+    if (files && files.length > 0) {
+      processImageFile(files[0]);
+    }
+  };
+
+  // Remove uploaded image
+  const removeImage = () => {
+    setUploadedImage(null);
+    setImageFile(null);
+  };
+  */
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -401,60 +493,61 @@ export const MLShowcase = () => {
 
       <div className="space-y-6">
         {/* Algorithm Selection Guide */}
-        <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200 rounded-xl p-6 shadow-sm">
-          <div className="flex items-start gap-6">
+        <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200 rounded-xl p-4 md:p-6 shadow-sm">
+          <div className="flex flex-col lg:flex-row items-start gap-4 lg:gap-6">
             <div className="p-3 bg-indigo-600 rounded-lg shadow-lg flex-shrink-0">
               <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>
             </div>
             
-            {/* Main Content - 65% */}
-            <div className="flex-1 min-w-0" style={{ flex: '0 0 65%' }}>
-              <h2 className="text-2xl font-bold text-indigo-900 mb-2">
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl md:text-2xl font-bold text-indigo-900 mb-2">
                 🚀 Explore Machine Learning Algorithms
               </h2>
-              <p className="text-indigo-700 mb-4 leading-relaxed">
+              <p className="text-indigo-700 mb-4 leading-relaxed text-sm md:text-base">
                 Select any algorithm tab below to dive into interactive learning. Each tab contains:
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 text-sm mb-4">
                 <div className="flex items-center gap-2 text-indigo-600">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                   </svg>
-                  <span>Interactive parameter tuning</span>
+                  <span className="text-xs md:text-sm">Interactive parameter tuning</span>
                 </div>
                 <div className="flex items-center gap-2 text-indigo-600">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                   </svg>
-                  <span>Real-time model training</span>
+                  <span className="text-xs md:text-sm">Real-time model training</span>
                 </div>
                 <div className="flex items-center gap-2 text-indigo-600">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                   </svg>
-                  <span>Interactive visualizations</span>
+                  <span className="text-xs md:text-sm">Interactive visualizations</span>
                 </div>
                 <div className="flex items-center gap-2 text-indigo-600">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
                   </svg>
-                  <span>Complete Python code examples</span>
+                  <span className="text-xs md:text-sm">Complete Python code examples</span>
                 </div>
               </div>
               
-              <div className="p-3 bg-white/60 rounded-lg border border-indigo-200">
-                <p className="text-sm text-indigo-800 font-medium">
-                  💡 <strong>How to use:</strong> Set your knowledge level → Click any algorithm tab → Adjust parameters → Click "Run Model" → Explore results and charts
+              <div className="p-2 bg-white/60 rounded-lg border border-indigo-200">
+                <p className="text-xs text-indigo-800 font-medium leading-tight">
+                  💡 <strong>How to use:</strong> Set your knowledge level → Click any algorithm tab → Adjust parameters<br/>
+                  → Click "Run Model" → Explore results and charts
                 </p>
               </div>
             </div>
 
-            {/* Knowledge Level Slider - 40% */}
-            <div className="flex-shrink-0" style={{ flex: '0 0 35%' }}>
-              <div className="p-3 bg-white/90 rounded-lg border border-indigo-200 shadow-sm h-full">
+            {/* Knowledge Level Slider */}
+            <div className="w-full lg:w-80 flex-shrink-0">
+              <div className="p-3 bg-white/90 rounded-lg border border-indigo-200 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-semibold text-indigo-900 flex items-center gap-1">
                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -471,8 +564,8 @@ export const MLShowcase = () => {
                   
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-600 w-12">Beginner</span>
-                      <div className="flex-1">
+                      <span className="text-xs text-gray-600 w-12 flex-shrink-0">Beginner</span>
+                      <div className="flex-1 min-w-0">
                         <Slider
                           value={[knowledgeLevel]}
                           onValueChange={(value: number[]) => setKnowledgeLevel(value[0])}
@@ -482,7 +575,7 @@ export const MLShowcase = () => {
                           className="w-full"
                         />
                       </div>
-                      <span className="text-xs text-gray-600 w-10">Expert</span>
+                      <span className="text-xs text-gray-600 w-10 flex-shrink-0">Expert</span>
                     </div>
                     
                     <div className="flex justify-between text-xs text-gray-400 px-12">
@@ -503,7 +596,881 @@ export const MLShowcase = () => {
           </div>
         </div>
 
-      <Tabs defaultValue="xgboost" className="w-full">
+        {/* ML Pipelines Collapsible Section */}
+        <Collapsible open={mlPipelinesOpen} onOpenChange={(open: boolean) => setMlPipelinesOpen(open)}>
+          <CollapsibleTrigger asChild>
+            <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-600 rounded-lg shadow-lg">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-emerald-900">
+                      🔧 ML Pipelines
+                    </h2>
+                    <p className="text-sm text-emerald-600">End-to-End Machine Learning Workflows</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-emerald-700 font-medium">
+                    {mlPipelinesOpen ? 'Hide Details' : 'Learn More'}
+                  </span>
+                  {mlPipelinesOpen ? (
+                    <ChevronUp className="h-5 w-5 text-emerald-600" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-emerald-600" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="mt-4">
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-6 shadow-sm">
+              <div className="space-y-6">
+                {/* Pipeline Overview */}
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    What are ML Pipelines?
+                  </h3>
+                  <p className="text-emerald-700 leading-relaxed mb-4">
+                    {knowledgeLevel <= 2 ? (
+                      "ML Pipelines are like assembly lines for machine learning! They automatically handle all the steps needed to turn raw data into predictions - from cleaning the data, to training the model, to making predictions. Think of it as a recipe that the computer follows every time."
+                    ) : knowledgeLevel <= 4 ? (
+                      "ML Pipelines are automated workflows that streamline the machine learning process from data preprocessing to model deployment. They ensure reproducibility, scalability, and maintainability of ML systems by chaining together data transformations, model training, and prediction steps."
+                    ) : (
+                      "ML Pipelines implement end-to-end MLOps workflows with automated data ingestion, feature engineering, model training, validation, deployment, and monitoring. They support CI/CD practices, A/B testing, model versioning, and automated retraining triggers for production ML systems."
+                    )}
+                  </p>
+                </div>
+
+                {/* Pipeline Components */}
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-.42-.94l1.329-2.05a2 2 0 00-.5-2.5L15.5 8.5a2 2 0 00-2.5-.5l-2.05 1.329a6 6 0 00-.94-.42l-.477-2.387a2 2 0 00-1.953-1.522H6.5a2 2 0 00-1.953 1.522l-.477 2.387a6 6 0 00-.94.42L1.08 7.5a2 2 0 00-2.5.5L-2.5 9.5a2 2 0 00-.5 2.5l1.329 2.05a6 6 0 00-.42.94l-2.387.477A2 2 0 00-5 17.5v1.077a2 2 0 001.522 1.953l2.387.477a6 6 0 00.42.94L.658 23.92a2 2 0 00.5 2.5L2.5 27.5a2 2 0 002.5.5l2.05-1.329a6 6 0 00.94.42l.477 2.387A2 2 0 0010.5 30h1.077a2 2 0 001.953-1.522l.477-2.387a6 6 0 00.94-.42l2.05 1.329a2 2 0 002.5-.5L20.5 25.5a2 2 0 00.5-2.5l-1.329-2.05a6 6 0 00.42-.94l2.387-.477A2 2 0 0023 17.5v-1.077a2 2 0 00-1.522-1.953z"/>
+                    </svg>
+                    Key Pipeline Components
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        <h4 className="font-semibold text-emerald-800">Data Preprocessing</h4>
+                      </div>
+                      <p className="text-sm text-emerald-700">Clean, transform, and prepare raw data for model training</p>
+                    </div>
+                    
+                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <h4 className="font-semibold text-emerald-800">Feature Engineering</h4>
+                      </div>
+                      <p className="text-sm text-emerald-700">Create and select the most relevant features for your model</p>
+                    </div>
+                    
+                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                        <h4 className="font-semibold text-emerald-800">Model Training</h4>
+                      </div>
+                      <p className="text-sm text-emerald-700">Train and validate your machine learning models</p>
+                    </div>
+                    
+                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                        <h4 className="font-semibold text-emerald-800">Model Deployment</h4>
+                      </div>
+                      <p className="text-sm text-emerald-700">Deploy models to production and monitor performance</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pipeline Benefits */}
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Why Use ML Pipelines?
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <span className="text-sm">Automation & Efficiency</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <span className="text-sm">Reproducible Results</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <span className="text-sm">Scalable Workflows</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <span className="text-sm">Error Reduction</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <span className="text-sm">Easy Collaboration</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                      <span className="text-sm">Version Control</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Popular Tools */}
+                <div className="bg-white/60 rounded-lg border border-emerald-200 p-4">
+                  <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    Popular ML Pipeline Tools
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Apache Airflow</span>
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Kubeflow</span>
+                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">MLflow</span>
+                    <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">TensorFlow Extended (TFX)</span>
+                    <span className="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-xs font-medium">Scikit-learn Pipeline</span>
+                    <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">AWS SageMaker</span>
+                  </div>
+                </div>
+
+                {/* ML Production-Ready Pipelines Sub-section */}
+                <div className="border-t border-violet-300 pt-6">
+                  <Collapsible open={mlProductionPipelinesOpen} onOpenChange={(open: boolean) => setMlProductionPipelinesOpen(open)}>
+                    <CollapsibleTrigger asChild>
+                      <div className="cursor-pointer hover:bg-violet-50 p-3 rounded-lg transition-colors duration-200">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-violet-900 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-violet-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                            </svg>
+                            ML Production-Ready Pipelines
+                          </h3>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-violet-700 font-medium">
+                              {mlProductionPipelinesOpen ? 'Hide Code Examples' : 'Show Code Examples'}
+                            </span>
+                            {mlProductionPipelinesOpen ? (
+                              <ChevronUp className="h-4 w-4 text-violet-600" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4 text-violet-600" />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="mt-4">
+                      <div className="space-y-4">
+                        <p className="text-violet-700 leading-relaxed">
+                          {knowledgeLevel <= 2 ? (
+                            "Production-ready pipelines are like professional assembly lines that can handle real-world data and serve millions of users. They include safety checks, monitoring, and automatic recovery when things go wrong."
+                          ) : knowledgeLevel <= 4 ? (
+                            "Production-ready ML pipelines incorporate robust error handling, monitoring, logging, automated testing, and deployment strategies to ensure reliable operation at scale in production environments."
+                          ) : (
+                            "Enterprise-grade ML pipelines implement comprehensive MLOps practices including CI/CD integration, automated testing, model versioning, A/B testing, canary deployments, monitoring, alerting, and automated rollback mechanisms for production reliability."
+                          )}
+                        </p>
+
+                        {/* Collapsible Code Examples */}
+                        <div className="space-y-4">
+                          {/* Scikit-learn Pipeline Example */}
+                          <Collapsible open={productionCodeOpen.sklearn} onOpenChange={(open: boolean) => setProductionCodeOpen({...productionCodeOpen, sklearn: open})}>
+                            <CollapsibleTrigger asChild>
+                              <Button variant="outline" className="w-full flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <svg className="w-4 h-4 text-violet-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                                  </svg>
+                                  <span>Scikit-learn Production Pipeline</span>
+                                </div>
+                                {productionCodeOpen.sklearn ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="mt-4">
+                              <div className="bg-gray-900 rounded-lg p-4 border border-violet-300">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <svg className="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                                  </svg>
+                                  <h4 className="text-violet-400 font-semibold">Complete Production Pipeline</h4>
+                                </div>
+                                <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# Production-ready ML Pipeline with Scikit-learn
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+import joblib
+import logging
+
+# Setup logging for production monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class ProductionMLPipeline:
+    def __init__(self):
+        # Define preprocessing for numerical and categorical features
+        self.numeric_features = ['age', 'income', 'credit_score']
+        self.categorical_features = ['education', 'employment_type']
+        
+        # Create preprocessing pipelines
+        numeric_transformer = StandardScaler()
+        categorical_transformer = OneHotEncoder(drop='first', sparse=False)
+        
+        # Combine preprocessing steps
+        self.preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, self.numeric_features),
+                ('cat', categorical_transformer, self.categorical_features)
+            ]
+        )
+        
+        # Create the complete pipeline
+        self.pipeline = Pipeline([
+            ('preprocessor', self.preprocessor),
+            ('classifier', RandomForestClassifier(
+                n_estimators=100,
+                random_state=42,
+                n_jobs=-1  # Use all CPU cores
+            ))
+        ])
+    
+    def train(self, X_train, y_train):
+        """Train the model with cross-validation"""
+        try:
+            logger.info("Starting model training...")
+            
+            # Perform cross-validation
+            cv_scores = cross_val_score(self.pipeline, X_train, y_train, cv=5)
+            logger.info(f"Cross-validation scores: {cv_scores}")
+            logger.info(f"Mean CV score: {cv_scores.mean():.4f}")
+            
+            # Train on full dataset
+            self.pipeline.fit(X_train, y_train)
+            logger.info("Model training completed successfully")
+            
+            return cv_scores.mean()
+            
+        except Exception as e:
+            logger.error(f"Training failed: {str(e)}")
+            raise
+    
+    def predict(self, X):
+        """Make predictions with error handling"""
+        try:
+            predictions = self.pipeline.predict(X)
+            probabilities = self.pipeline.predict_proba(X)
+            
+            logger.info(f"Generated {len(predictions)} predictions")
+            return predictions, probabilities
+            
+        except Exception as e:
+            logger.error(f"Prediction failed: {str(e)}")
+            raise
+    
+    def save_model(self, filepath):
+        """Save the trained pipeline"""
+        try:
+            joblib.dump(self.pipeline, filepath)
+            logger.info(f"Model saved to {filepath}")
+        except Exception as e:
+            logger.error(f"Failed to save model: {str(e)}")
+            raise
+    
+    def load_model(self, filepath):
+        """Load a trained pipeline"""
+        try:
+            self.pipeline = joblib.load(filepath)
+            logger.info(f"Model loaded from {filepath}")
+        except Exception as e:
+            logger.error(f"Failed to load model: {str(e)}")
+            raise
+
+# Usage example
+if __name__ == "__main__":
+    # Initialize pipeline
+    ml_pipeline = ProductionMLPipeline()
+    
+    # Train model (X_train, y_train would be your actual data)
+    # cv_score = ml_pipeline.train(X_train, y_train)
+    
+    # Save trained model
+    # ml_pipeline.save_model('production_model.pkl')
+    
+    # Make predictions
+    # predictions, probabilities = ml_pipeline.predict(X_test)`}
+                                </pre>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+
+                          {/* MLflow Pipeline Example */}
+                          <Collapsible open={productionCodeOpen.mlflow} onOpenChange={(open: boolean) => setProductionCodeOpen({...productionCodeOpen, mlflow: open})}>
+                            <CollapsibleTrigger asChild>
+                              <Button variant="outline" className="w-full flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <svg className="w-4 h-4 text-violet-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                  </svg>
+                                  <span>MLflow Experiment Tracking</span>
+                                </div>
+                                {productionCodeOpen.mlflow ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="mt-4">
+                              <div className="bg-gray-900 rounded-lg p-4 border border-violet-300">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <svg className="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                  </svg>
+                                  <h4 className="text-violet-400 font-semibold">Model Tracking & Registry</h4>
+                                </div>
+                                <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# MLflow for experiment tracking and model registry
+import mlflow
+import mlflow.sklearn
+from mlflow.tracking import MlflowClient
+from sklearn.metrics import accuracy_score
+
+class MLflowPipeline:
+    def __init__(self, experiment_name="production_ml_pipeline"):
+        # Set up MLflow experiment
+        mlflow.set_experiment(experiment_name)
+        self.client = MlflowClient()
+    
+    def train_and_track(self, X_train, y_train, X_test, y_test):
+        """Train model with MLflow tracking"""
+        
+        with mlflow.start_run() as run:
+            # Log parameters
+            mlflow.log_param("model_type", "RandomForestClassifier")
+            mlflow.log_param("n_estimators", 100)
+            mlflow.log_param("random_state", 42)
+            
+            # Train model
+            pipeline = ProductionMLPipeline()
+            cv_score = pipeline.train(X_train, y_train)
+            
+            # Evaluate on test set
+            predictions, probabilities = pipeline.predict(X_test)
+            test_accuracy = accuracy_score(y_test, predictions)
+            
+            # Log metrics
+            mlflow.log_metric("cv_score", cv_score)
+            mlflow.log_metric("test_accuracy", test_accuracy)
+            
+            # Log model
+            mlflow.sklearn.log_model(
+                pipeline.pipeline,
+                "model",
+                registered_model_name="production_classifier"
+            )
+            
+            # Log artifacts (plots, reports, etc.)
+            # mlflow.log_artifact("confusion_matrix.png")
+            
+            print(f"Run ID: {run.info.run_id}")
+            print(f"Model URI: runs:/{run.info.run_id}/model")
+            
+            return run.info.run_id
+    
+    def deploy_best_model(self, stage="Production"):
+        """Deploy the best model to production"""
+        
+        # Get the best model from registry
+        model_name = "production_classifier"
+        latest_version = self.client.get_latest_versions(
+            model_name, 
+            stages=[stage]
+        )[0]
+        
+        # Load model for serving
+        model_uri = f"models:/{model_name}/{stage}"
+        loaded_model = mlflow.sklearn.load_model(model_uri)
+        
+        print(f"Deployed model version: {latest_version.version}")
+        return loaded_model
+
+# Usage
+pipeline = MLflowPipeline()
+# run_id = pipeline.train_and_track(X_train, y_train, X_test, y_test)
+# production_model = pipeline.deploy_best_model()`}
+                                </pre>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+
+                          {/* Docker Deployment Example */}
+                          <Collapsible open={productionCodeOpen.docker} onOpenChange={(open: boolean) => setProductionCodeOpen({...productionCodeOpen, docker: open})}>
+                            <CollapsibleTrigger asChild>
+                              <Button variant="outline" className="w-full flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <svg className="w-4 h-4 text-violet-600" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M13.5 3H12H8C6.34 3 5 4.34 5 6V18C5 19.66 6.34 21 8 21H16C17.66 21 19 19.66 19 18V8L13.5 3ZM16 18H8V6H12V9H16V18Z"/>
+                                  </svg>
+                                  <span>Docker Production Deployment</span>
+                                </div>
+                                {productionCodeOpen.docker ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="mt-4">
+                              <div className="bg-gray-900 rounded-lg p-4 border border-violet-300">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <svg className="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M13.5 3H12H8C6.34 3 5 4.34 5 6V18C5 19.66 6.34 21 8 21H16C17.66 21 19 19.66 19 18V8L13.5 3ZM16 18H8V6H12V9H16V18Z"/>
+                                  </svg>
+                                  <h4 className="text-violet-400 font-semibold">Containerized Deployment</h4>
+                                </div>
+                                <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# Dockerfile for ML Pipeline Deployment
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \\
+    gcc \\
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash mluser
+RUN chown -R mluser:mluser /app
+USER mluser
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \\
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Run the application
+CMD ["python", "app.py"]
+
+# docker-compose.yml for production deployment
+version: '3.8'
+services:
+  ml-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/models/production_model.pkl
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./models:/app/models:ro
+      - ./logs:/app/logs
+    restart: unless-stopped
+    
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    
+  monitoring:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+# FastAPI Production Server (app.py)
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import joblib
+import numpy as np
+import logging
+
+app = FastAPI(title="ML Production API")
+logger = logging.getLogger(__name__)
+
+# Load model at startup
+model = None
+
+@app.on_event("startup")
+async def load_model():
+    global model
+    try:
+        model = joblib.load("models/production_model.pkl")
+        logger.info("Model loaded successfully")
+    except Exception as e:
+        logger.error(f"Failed to load model: {e}")
+
+class PredictionRequest(BaseModel):
+    features: list
+
+@app.post("/predict")
+async def predict(request: PredictionRequest):
+    if model is None:
+        raise HTTPException(status_code=500, detail="Model not loaded")
+    
+    try:
+        features = np.array(request.features).reshape(1, -1)
+        prediction = model.predict(features)
+        probability = model.predict_proba(features)
+        
+        return {
+            "prediction": prediction.tolist(),
+            "probability": probability.tolist()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "model_loaded": model is not None}`}
+                                </pre>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        </div>
+
+                        <div className="bg-white/70 p-4 rounded-lg border border-violet-200">
+                      <h4 className="font-semibold text-violet-800 mb-2 flex items-center gap-2">
+                        <svg className="w-4 h-4 text-violet-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Production Best Practices
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div className="flex items-center gap-2 text-violet-700">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>Automated testing & validation</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-violet-700">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          <span>Model versioning & registry</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-violet-700">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <span>Performance monitoring</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-violet-700">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                          <span>Data drift detection</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-violet-700">
+                          <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                          <span>Automated rollback</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-violet-700">
+                          <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                          <span>Security & compliance</span>
+                        </div>
+                      </div>
+                    </div>
+
+                        {/* AWS ML Pipelines Section */}
+                        <div className="border-t border-orange-300 pt-6 mt-6">
+                          <Collapsible open={awsPipelinesOpen} onOpenChange={(open: boolean) => setAwsPipelinesOpen(open)}>
+                            <CollapsibleTrigger asChild>
+                              <div className="cursor-pointer hover:bg-orange-50 p-3 rounded-lg transition-colors duration-200">
+                                <div className="flex items-center justify-between">
+                                  <h3 className="text-lg font-semibold text-orange-900 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.219-5.175 1.219-5.175s-.312-.623-.312-1.544c0-1.448.839-2.529 1.884-2.529.888 0 1.317.666 1.317 1.466 0 .893-.568 2.229-.861 3.467-.245 1.04.522 1.887 1.55 1.887 1.861 0 3.314-2.171 3.314-4.742 0-1.943-1.301-3.405-3.48-3.405-2.579 0-4.168 1.873-4.168 3.946 0 .719.257 1.233.677 1.627.186.219.212.307.145.558-.05.186-.162.658-.212.842-.065.238-.267.29-.412.211-1.148-.472-1.722-1.738-1.722-3.165 0-2.543 2.034-5.58 6.067-5.58 3.27 0 5.432 2.369 5.432 4.931 0 3.308-1.797 5.803-4.417 5.803-.883 0-1.714-.48-2.002-1.072 0 0-.478 1.925-.578 2.262-.173.665-.519 1.308-.926 1.827C9.845 23.69 10.892 24 12.017 24c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"/>
+                                    </svg>
+                                    Creating Production-Ready ML Pipelines on AWS
+                                  </h3>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-orange-700 font-medium">
+                                      {awsPipelinesOpen ? 'Hide AWS Guide' : 'Show AWS Guide'}
+                                    </span>
+                                    {awsPipelinesOpen ? (
+                                      <ChevronUp className="h-4 w-4 text-orange-600" />
+                                    ) : (
+                                      <ChevronDown className="h-4 w-4 text-orange-600" />
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </CollapsibleTrigger>
+                            
+                            <CollapsibleContent className="mt-4">
+                              <div className="space-y-6">
+                                <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-4">
+                                  <p className="text-orange-700 leading-relaxed mb-4">
+                                    {knowledgeLevel <= 2 ? (
+                                      "AWS provides a complete set of tools to build machine learning pipelines that can handle real-world production workloads. Think of it like having a factory assembly line, but for training and deploying AI models automatically."
+                                    ) : knowledgeLevel <= 4 ? (
+                                      "AWS offers comprehensive services for building production-ready ML pipelines including Amazon SageMaker, AWS Step Functions, and CloudFormation for infrastructure automation. This approach ensures scalability, reliability, and maintainability of ML workflows."
+                                    ) : (
+                                      "AWS provides enterprise-grade MLOps capabilities through SageMaker Pipelines, Step Functions orchestration, CloudFormation infrastructure-as-code, and integrated monitoring/logging services for production ML lifecycle management."
+                                    )}
+                                  </p>
+                                  
+                                  <div className="bg-white/70 p-3 rounded border border-orange-300">
+                                    <p className="text-sm text-orange-800 font-medium flex items-center gap-2">
+                                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                      </svg>
+                                      <strong>Source:</strong> 
+                                      <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/ml-production-ready-pipelines/welcome.html" 
+                                         target="_blank" 
+                                         rel="noopener noreferrer"
+                                         className="text-blue-600 hover:text-blue-800 underline">
+                                        AWS Prescriptive Guidance - Creating production-ready ML pipelines on AWS
+                                      </a>
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                  <h4 className="text-lg font-semibold text-emerald-900 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    6-Step Process for AWS ML Pipelines
+                                  </h4>
+                                  
+                                  <div className="space-y-4">
+                                    {/* Step 1 */}
+                                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                          1
+                                        </div>
+                                        <div className="flex-1">
+                                          <h5 className="font-semibold text-emerald-800 mb-2">Perform EDA and Develop Initial Model</h5>
+                                          <p className="text-sm text-emerald-700 mb-3">
+                                            Data scientists make raw data available in Amazon S3, perform exploratory data analysis (EDA), develop the initial ML model, and evaluate its inference performance. You can conduct these activities interactively through Jupyter notebooks.
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">Amazon S3</span>
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">Jupyter Notebooks</span>
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">EDA</span>
+                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">Model Development</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Step 2 */}
+                                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                          2
+                                        </div>
+                                        <div className="flex-1">
+                                          <h5 className="font-semibold text-emerald-800 mb-2">Create Runtime Scripts</h5>
+                                          <p className="text-sm text-emerald-700 mb-3">
+                                            You integrate the model with runtime Python scripts so that it can be managed and provisioned by Amazon SageMaker AI. This is the first step in moving away from interactive development toward production. Define logic for preprocessing, evaluation, training, and inference separately.
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Python Scripts</span>
+                                            <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Amazon SageMaker</span>
+                                            <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Preprocessing</span>
+                                            <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">Training Logic</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Step 3 */}
+                                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                          3
+                                        </div>
+                                        <div className="flex-1">
+                                          <h5 className="font-semibold text-emerald-800 mb-2">Define the Pipeline</h5>
+                                          <p className="text-sm text-emerald-700 mb-3">
+                                            You define the input and output placeholders for each step of the pipeline. Concrete values for these will be supplied later, during runtime (step 5). Focus on pipelines for training, inference, cross-validation, and back-testing.
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Pipeline Definition</span>
+                                            <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Input/Output Placeholders</span>
+                                            <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Cross-validation</span>
+                                            <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">Back-testing</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Step 4 */}
+                                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                          4
+                                        </div>
+                                        <div className="flex-1">
+                                          <h5 className="font-semibold text-emerald-800 mb-2">Create the Pipeline</h5>
+                                          <p className="text-sm text-emerald-700 mb-3">
+                                            You create the underlying infrastructure, including the AWS Step Functions state machine instance in an automated (nearly one-click) fashion, by using AWS CloudFormation.
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">AWS Step Functions</span>
+                                            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">CloudFormation</span>
+                                            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Infrastructure as Code</span>
+                                            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Automation</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Step 5 */}
+                                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                          5
+                                        </div>
+                                        <div className="flex-1">
+                                          <h5 className="font-semibold text-emerald-800 mb-2">Run the Pipeline</h5>
+                                          <p className="text-sm text-emerald-700 mb-3">
+                                            You run the pipeline defined in step 4. Prepare metadata and data or data locations to fill in concrete values for the input/output placeholders defined in step 3. This includes the runtime scripts from step 2 as well as model hyperparameters.
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">Pipeline Execution</span>
+                                            <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">Metadata</span>
+                                            <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">Hyperparameters</span>
+                                            <span className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-xs">Runtime Scripts</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Step 6 */}
+                                    <div className="bg-white/70 p-4 rounded-lg border border-emerald-200">
+                                      <div className="flex items-start gap-3">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                          6
+                                        </div>
+                                        <div className="flex-1">
+                                          <h5 className="font-semibold text-emerald-800 mb-2">Expand the Pipeline</h5>
+                                          <p className="text-sm text-emerald-700 mb-3">
+                                            You implement continuous integration and continuous deployment (CI/CD) processes, automated retraining, scheduled inference, and similar extensions of the pipeline.
+                                          </p>
+                                          <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">CI/CD</span>
+                                            <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Automated Retraining</span>
+                                            <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Scheduled Inference</span>
+                                            <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Pipeline Extensions</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* AWS Services Overview */}
+                                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                                  <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.219-5.175 1.219-5.175s-.312-.623-.312-1.544c0-1.448.839-2.529 1.884-2.529.888 0 1.317.666 1.317 1.466 0 .893-.568 2.229-.861 3.467-.245 1.04.522 1.887 1.55 1.887 1.861 0 3.314-2.171 3.314-4.742 0-1.943-1.301-3.405-3.48-3.405-2.579 0-4.168 1.873-4.168 3.946 0 .719.257 1.233.677 1.627.186.219.212.307.145.558-.05.186-.162.658-.212.842-.065.238-.267.29-.412.211-1.148-.472-1.722-1.738-1.722-3.165 0-2.543 2.034-5.58 6.067-5.58 3.27 0 5.432 2.369 5.432 4.931 0 3.308-1.797 5.803-4.417 5.803-.883 0-1.714-.48-2.002-1.072 0 0-.478 1.925-.578 2.262-.173.665-.519 1.308-.926 1.827C9.845 23.69 10.892 24 12.017 24c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"/>
+                                    </svg>
+                                    Key AWS Services for ML Pipelines
+                                  </h4>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    <div className="bg-white/70 p-3 rounded border border-blue-300">
+                                      <h5 className="font-semibold text-blue-800 text-sm mb-1">Amazon SageMaker</h5>
+                                      <p className="text-xs text-blue-700">End-to-end ML platform for model development, training, and deployment</p>
+                                    </div>
+                                    <div className="bg-white/70 p-3 rounded border border-blue-300">
+                                      <h5 className="font-semibold text-blue-800 text-sm mb-1">AWS Step Functions</h5>
+                                      <p className="text-xs text-blue-700">Orchestrate ML workflows with visual state machines</p>
+                                    </div>
+                                    <div className="bg-white/70 p-3 rounded border border-blue-300">
+                                      <h5 className="font-semibold text-blue-800 text-sm mb-1">AWS CloudFormation</h5>
+                                      <p className="text-xs text-blue-700">Infrastructure as code for automated resource provisioning</p>
+                                    </div>
+                                    <div className="bg-white/70 p-3 rounded border border-blue-300">
+                                      <h5 className="font-semibold text-blue-800 text-sm mb-1">Amazon S3</h5>
+                                      <p className="text-xs text-blue-700">Scalable data storage for training datasets and model artifacts</p>
+                                    </div>
+                                    <div className="bg-white/70 p-3 rounded border border-blue-300">
+                                      <h5 className="font-semibold text-blue-800 text-sm mb-1">AWS Lambda</h5>
+                                      <p className="text-xs text-blue-700">Serverless compute for lightweight ML processing tasks</p>
+                                    </div>
+                                    <div className="bg-white/70 p-3 rounded border border-blue-300">
+                                      <h5 className="font-semibold text-blue-800 text-sm mb-1">Amazon CloudWatch</h5>
+                                      <p className="text-xs text-blue-700">Monitoring and logging for ML pipeline observability</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Popular Machine Learning Algorithms Section */}
+        <Collapsible open={mlAlgorithmsOpen} onOpenChange={(open: boolean) => setMlAlgorithmsOpen(open)}>
+          <CollapsibleTrigger asChild>
+            <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-600 rounded-lg shadow-lg">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-indigo-900">
+                      🤖 Popular Machine Learning Algorithms
+                    </h2>
+                    <p className="text-sm text-indigo-600">Interactive exploration of 5 powerful ML algorithms with real-time parameter tuning</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-indigo-700 font-medium">
+                    {mlAlgorithmsOpen ? 'Hide Algorithms' : 'Show Algorithms'}
+                  </span>
+                  {mlAlgorithmsOpen ? (
+                    <ChevronUp className="h-5 w-5 text-indigo-600" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-indigo-600" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent>
+            <Tabs defaultValue="xgboost" className="w-full">
         <TabsList className="grid w-full grid-cols-5 bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded-xl border border-blue-100 shadow-sm backdrop-blur-sm">
           <TabsTrigger 
             value="xgboost" 
@@ -2751,6 +3718,8 @@ print(f"\\nClassification Report:\\n{classification_report(y_test, y_pred)}")`}
           </Card>
         </TabsContent>
       </Tabs>
+          </CollapsibleContent>
+        </Collapsible>
 
       {/* Footer Section */}
       <footer className="mt-16 border-t bg-gradient-to-r from-gray-50 to-blue-50">

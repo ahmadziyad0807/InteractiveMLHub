@@ -23,6 +23,7 @@ import {
   PieChart,
   Pie
 } from 'recharts';
+import SecurityUtils from '@/lib/security';
 
 interface AlgorithmResult {
   accuracy?: number;
@@ -213,6 +214,18 @@ export const MLShowcase = () => {
     setChatbotOpen(activeNavItem === 'chatbot');
     setMlopsOpen(activeNavItem === 'mlops');
   }, [activeNavItem]);
+
+  // Secure search handler
+  const handleSearchChange = (value: string) => {
+    // Validate and sanitize search input
+    const searchValidation = SecurityUtils.validateInput(value, 100); // 100 char limit for search
+    if (searchValidation.isValid) {
+      setSearchQuery(searchValidation.sanitized);
+    } else {
+      // For search, we'll be more lenient and just sanitize without showing errors
+      setSearchQuery(SecurityUtils.sanitizeHtml(value.substring(0, 100)));
+    }
+  };
 
   // Navigation and UI state
 
@@ -474,23 +487,11 @@ export const MLShowcase = () => {
   };
 
   const processDocumentFile = (file: File) => {
-    // Validate file type - only text, PDF, and Word files
-    const validTypes = [
-      'application/pdf',
-      'text/plain',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
+    // Use security utilities for file validation
+    const fileValidation = SecurityUtils.validateFileUpload(file);
     
-    if (!validTypes.includes(file.type)) {
-      alert('Please upload a valid document file (PDF, TXT, DOC, or DOCX only)');
-      return;
-    }
-    
-    // Validate file size (max 0.5MB)
-    const maxSize = 0.5 * 1024 * 1024; // 0.5MB in bytes
-    if (file.size > maxSize) {
-      alert('Please upload a document smaller than 0.5MB');
+    if (!fileValidation.isValid) {
+      alert(`File validation failed: ${fileValidation.errors.join(', ')}`);
       return;
     }
     
@@ -503,20 +504,29 @@ export const MLShowcase = () => {
       const content = e.target?.result as string;
       
       if (file.type === 'text/plain') {
-        setDocumentContent(content);
+        // Validate and sanitize content
+        const contentValidation = SecurityUtils.validateInput(content, 50000); // 50KB max content
+        if (!contentValidation.isValid) {
+          alert(`Content validation failed: ${contentValidation.errors.join(', ')}`);
+          setIsProcessing(false);
+          return;
+        }
+        setDocumentContent(contentValidation.sanitized);
       } else {
         // For PDF and Word files, we'll use a simplified text extraction
         // In a real implementation, you'd use libraries like pdf-parse, mammoth, etc.
-        setDocumentContent(`Document "${file.name}" uploaded successfully. Content extraction for ${file.type} files would require additional libraries in a production environment.`);
+        const safeFileName = SecurityUtils.sanitizeHtml(file.name);
+        setDocumentContent(`Document "${safeFileName}" uploaded successfully. Content extraction for ${file.type} files would require additional libraries in a production environment.`);
       }
       
       setIsProcessing(false);
       setDocumentChatOpen(true);
       
-      // Add welcome message
+      // Add welcome message with sanitized file name
+      const safeFileName = SecurityUtils.sanitizeHtml(file.name);
       setChatMessages([{
         role: 'assistant',
-        content: `Hello! I've processed your document "${file.name}". You can now ask me questions about its content. What would you like to know?`
+        content: `Hello! I've processed your document "${safeFileName}". You can now ask me questions about its content. What would you like to know?`
       }]);
     };
     
@@ -544,10 +554,26 @@ export const MLShowcase = () => {
     if (!currentMessage.trim() || !documentContent) return;
     
     const userMessage = currentMessage.trim();
+    
+    // Validate and sanitize user input
+    const messageValidation = SecurityUtils.validateInput(userMessage, 500); // 500 char limit for messages
+    if (!messageValidation.isValid) {
+      alert(`Message validation failed: ${messageValidation.errors.join(', ')}`);
+      return;
+    }
+    
+    // Check rate limiting
+    const rateLimitCheck = SecurityUtils.checkRateLimit('chat_messages');
+    if (!rateLimitCheck.allowed) {
+      alert(`Rate limit exceeded. Please wait before sending another message. Remaining requests: ${rateLimitCheck.remainingRequests}`);
+      return;
+    }
+    
+    const sanitizedMessage = messageValidation.sanitized;
     setCurrentMessage('');
     
     // Add user message
-    const newMessages = [...chatMessages, { role: 'user' as const, content: userMessage }];
+    const newMessages = [...chatMessages, { role: 'user' as const, content: sanitizedMessage }];
     setChatMessages(newMessages);
     
     setIsProcessing(true);
@@ -556,7 +582,7 @@ export const MLShowcase = () => {
     setTimeout(() => {
       // Simple keyword-based response simulation
       // In a real implementation, this would use LangChain with an open-source LLM
-      let response = generateSimpleResponse(userMessage, documentContent);
+      let response = generateSimpleResponse(sanitizedMessage, documentContent);
       
       setChatMessages([...newMessages, { role: 'assistant' as const, content: response }]);
       setIsProcessing(false);
@@ -648,7 +674,7 @@ export const MLShowcase = () => {
                         type="text"
                         placeholder="Search algorithms, concepts, or features..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                       />
                       <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -783,35 +809,35 @@ export const MLShowcase = () => {
         
         {/* Home/Landing Page - Show when home nav is active */}
         {activeNavItem === 'home' && (
-          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-4">
+          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-3">
             {/* Hero Section */}
-            <div className="text-center mb-8">
-              <div className="flex justify-center mb-4">
-                <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg">
-                  <Brain className="h-10 w-10 text-white" />
+            <div className="text-center mb-4">
+              <div className="flex justify-center mb-2">
+                <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-md">
+                  <Brain className="h-6 w-6 text-white" />
                 </div>
               </div>
               
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+              <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
                 Interactive AL ML Learning Hub
               </h1>
               
-              <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
-                Your comprehensive platform for exploring 
+              <p className="text-sm text-gray-700 mb-3 max-w-2xl mx-auto">
+                Your platform for exploring 
                 <span className="font-semibold text-blue-600"> AI</span> and 
                 <span className="font-semibold text-purple-600"> ML</span> technologies
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
+              <div className="flex flex-col sm:flex-row gap-2 justify-center items-center mb-4">
                 <button 
                   onClick={() => setActiveNavItem('algorithms')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   Start Learning
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('pipelines')}
-                  className="border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
+                  className="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
                 >
                   Explore Pipelines
                 </button>
@@ -819,214 +845,208 @@ export const MLShowcase = () => {
             </div>
 
             {/* Features Overview */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            <div className="mb-4">
+              <h2 className="text-lg font-bold text-center text-gray-800 mb-3">
                 🚀 What You'll Discover
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {/* ML Algorithms Card */}
                 <div 
                   onClick={() => setActiveNavItem('algorithms')}
-                  className="bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-indigo-600 rounded-lg">
-                      <BarChart3 className="h-4 w-4 text-white" />
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-indigo-600 rounded">
+                      <BarChart3 className="h-3 w-3 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-indigo-900">ML Algorithms</h3>
+                    <h3 className="text-sm font-bold text-indigo-900">ML Algorithms</h3>
                   </div>
-                  <p className="text-indigo-700 text-sm mb-3">
-                    Interactive exploration of 5 ML algorithms with real-time parameter tuning.
+                  <p className="text-indigo-700 text-xs mb-2">
+                    Interactive exploration of 5 ML algorithms.
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded text-xs">XGBoost</span>
-                    <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded text-xs">SVM</span>
-                    <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded text-xs">k-NN</span>
+                    <span className="px-1 py-0.5 bg-indigo-200 text-indigo-800 rounded text-xs">XGBoost</span>
+                    <span className="px-1 py-0.5 bg-indigo-200 text-indigo-800 rounded text-xs">SVM</span>
                   </div>
                 </div>
 
                 {/* ML Pipelines Card */}
                 <div 
                   onClick={() => setActiveNavItem('pipelines')}
-                  className="bg-gradient-to-br from-emerald-100 to-teal-100 border border-emerald-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-emerald-100 to-teal-100 border border-emerald-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-emerald-600 rounded-lg">
-                      <Settings className="h-4 w-4 text-white" />
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-emerald-600 rounded">
+                      <Settings className="h-3 w-3 text-white" />
                     </div>
-                    <h3 className="text-lg font-bold text-emerald-900">ML Pipelines</h3>
+                    <h3 className="text-sm font-bold text-emerald-900">ML Pipelines</h3>
                   </div>
-                  <p className="text-emerald-700 text-sm mb-3">
-                    End-to-end ML workflows and production-ready pipelines.
+                  <p className="text-emerald-700 text-xs mb-2">
+                    End-to-end ML workflows.
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-1 bg-emerald-200 text-emerald-800 rounded text-xs">MLflow</span>
-                    <span className="px-2 py-1 bg-emerald-200 text-emerald-800 rounded text-xs">Docker</span>
-                    <span className="px-2 py-1 bg-emerald-200 text-emerald-800 rounded text-xs">AWS</span>
+                    <span className="px-1 py-0.5 bg-emerald-200 text-emerald-800 rounded text-xs">MLflow</span>
+                    <span className="px-1 py-0.5 bg-emerald-200 text-emerald-800 rounded text-xs">Docker</span>
                   </div>
                 </div>
 
                 {/* RAG Systems Card */}
                 <div 
                   onClick={() => setActiveNavItem('rag')}
-                  className="bg-gradient-to-br from-teal-100 to-cyan-100 border border-teal-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-teal-100 to-cyan-100 border border-teal-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-teal-600 rounded-lg">
-                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-teal-600 rounded">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold text-teal-900">RAG Systems</h3>
+                    <h3 className="text-sm font-bold text-teal-900">RAG Systems</h3>
                   </div>
-                  <p className="text-teal-700 text-sm mb-3">
-                    Retrieval-Augmented Generation for intelligent AI systems.
+                  <p className="text-teal-700 text-xs mb-2">
+                    Retrieval-Augmented Generation.
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-1 bg-teal-200 text-teal-800 rounded text-xs">Vector DB</span>
-                    <span className="px-2 py-1 bg-teal-200 text-teal-800 rounded text-xs">LLMs</span>
-                    <span className="px-2 py-1 bg-teal-200 text-teal-800 rounded text-xs">Retrieval</span>
+                    <span className="px-1 py-0.5 bg-teal-200 text-teal-800 rounded text-xs">Vector DB</span>
+                    <span className="px-1 py-0.5 bg-teal-200 text-teal-800 rounded text-xs">LLMs</span>
                   </div>
                 </div>
 
                 {/* AI Chatbot Card */}
                 <div 
                   onClick={() => setActiveNavItem('chatbot')}
-                  className="bg-gradient-to-br from-green-100 to-emerald-100 border border-green-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-green-100 to-emerald-100 border border-green-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-green-600 rounded-lg">
-                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-green-600 rounded">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold text-green-900">AI Chatbot</h3>
+                    <h3 className="text-sm font-bold text-green-900">AI Chatbot</h3>
                   </div>
-                  <p className="text-green-700 text-sm mb-3">
-                    Build intelligent conversational AI systems with NLP.
+                  <p className="text-green-700 text-xs mb-2">
+                    Build conversational AI systems.
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">NLP</span>
-                    <span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">Rasa</span>
-                    <span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">Dialogflow</span>
+                    <span className="px-1 py-0.5 bg-green-200 text-green-800 rounded text-xs">NLP</span>
+                    <span className="px-1 py-0.5 bg-green-200 text-green-800 rounded text-xs">Rasa</span>
                   </div>
                 </div>
 
                 {/* MLOps Card */}
                 <div 
                   onClick={() => setActiveNavItem('mlops')}
-                  className="bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-purple-600 rounded-lg">
-                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-purple-600 rounded">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold text-purple-900">MLOps</h3>
+                    <h3 className="text-sm font-bold text-purple-900">MLOps</h3>
                   </div>
-                  <p className="text-purple-700 text-sm mb-3">
-                    ML lifecycle management and production deployment.
+                  <p className="text-purple-700 text-xs mb-2">
+                    ML lifecycle management.
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded text-xs">CI/CD</span>
-                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded text-xs">MLflow</span>
-                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded text-xs">Monitoring</span>
+                    <span className="px-1 py-0.5 bg-purple-200 text-purple-800 rounded text-xs">CI/CD</span>
+                    <span className="px-1 py-0.5 bg-purple-200 text-purple-800 rounded text-xs">MLflow</span>
                   </div>
                 </div>
 
                 {/* Resources Card */}
                 <div 
                   onClick={() => setActiveNavItem('resources')}
-                  className="bg-gradient-to-br from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-gray-600 rounded-lg">
-                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-gray-600 rounded">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                       </svg>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900">Resources</h3>
+                    <h3 className="text-sm font-bold text-gray-900">Resources</h3>
                   </div>
-                  <p className="text-gray-700 text-sm mb-3">
-                    Additional learning materials and documentation.
+                  <p className="text-gray-700 text-xs mb-2">
+                    Learning materials & docs.
                   </p>
                   <div className="flex flex-wrap gap-1">
-                    <span className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs">Docs</span>
-                    <span className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs">Datasets</span>
-                    <span className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs">Tutorials</span>
+                    <span className="px-1 py-0.5 bg-gray-200 text-gray-800 rounded text-xs">Docs</span>
+                    <span className="px-1 py-0.5 bg-gray-200 text-gray-800 rounded text-xs">Datasets</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Key Features - Compact */}
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
+            <div className="mb-3">
+              <h2 className="text-md font-bold text-center text-gray-800 mb-2">
                 ✨ Platform Features
               </h2>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="text-center p-3 bg-white/70 rounded-lg border border-blue-200">
-                  <div className="p-2 bg-blue-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
-                    <Play className="h-5 w-5 text-blue-600" />
+              <div className="grid grid-cols-4 gap-2">
+                <div className="text-center p-2 bg-white/70 rounded-lg border border-blue-200">
+                  <div className="p-1 bg-blue-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
+                    <Play className="h-3 w-3 text-blue-600" />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Interactive</h3>
-                  <p className="text-gray-600 text-xs">Real-time tuning</p>
+                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Interactive</h3>
+                  <p className="text-gray-600 text-xs">Real-time</p>
                 </div>
                 
-                <div className="text-center p-3 bg-white/70 rounded-lg border border-green-200">
-                  <div className="p-2 bg-green-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
-                    <Code2 className="h-5 w-5 text-green-600" />
+                <div className="text-center p-2 bg-white/70 rounded-lg border border-green-200">
+                  <div className="p-1 bg-green-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
+                    <Code2 className="h-3 w-3 text-green-600" />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Production Code</h3>
+                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Production</h3>
                   <p className="text-gray-600 text-xs">Ready-to-use</p>
                 </div>
                 
-                <div className="text-center p-3 bg-white/70 rounded-lg border border-purple-200">
-                  <div className="p-2 bg-purple-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
-                    <BarChart3 className="h-5 w-5 text-purple-600" />
+                <div className="text-center p-2 bg-white/70 rounded-lg border border-purple-200">
+                  <div className="p-1 bg-purple-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
+                    <BarChart3 className="h-3 w-3 text-purple-600" />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Visualizations</h3>
-                  <p className="text-gray-600 text-xs">Interactive charts</p>
+                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Charts</h3>
+                  <p className="text-gray-600 text-xs">Interactive</p>
                 </div>
                 
-                <div className="text-center p-3 bg-white/70 rounded-lg border border-orange-200">
-                  <div className="p-2 bg-orange-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
-                    <CheckCircle2 className="h-5 w-5 text-orange-600" />
+                <div className="text-center p-2 bg-white/70 rounded-lg border border-orange-200">
+                  <div className="p-1 bg-orange-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
+                    <CheckCircle2 className="h-3 w-3 text-orange-600" />
                   </div>
-                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Best Practices</h3>
-                  <p className="text-gray-600 text-xs">Industry standards</p>
+                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Best Practices</h3>
+                  <p className="text-gray-600 text-xs">Industry</p>
                 </div>
               </div>
             </div>
 
             {/* Getting Started - Compact */}
-            <div className="bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300 rounded-lg p-4 text-center">
-              <h2 className="text-xl font-bold text-gray-800 mb-2">
+            <div className="bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300 rounded-lg p-3 text-center">
+              <h2 className="text-md font-bold text-gray-800 mb-1">
                 🎯 Ready to Start?
               </h2>
-              <p className="text-sm text-gray-700 mb-4">
-                Choose your learning path and start exploring AI/ML technologies today.
+              <p className="text-xs text-gray-700 mb-2">
+                Choose your learning path and start exploring AI/ML technologies.
               </p>
               
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap gap-1 justify-center">
                 <button 
                   onClick={() => setActiveNavItem('algorithms')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
                 >
                   ML Algorithms
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('chatbot')}
-                  className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-200"
                 >
                   AI Chatbots
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('mlops')}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200"
                 >
                   MLOps
                 </button>

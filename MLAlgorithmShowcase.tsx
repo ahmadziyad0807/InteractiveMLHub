@@ -111,7 +111,7 @@ export const MLShowcase = () => {
   const knowledgeLevel = 3; // Default to intermediate level
 
   // Navigation and UI state - moved up to be available for other state initializations
-  const [activeNavItem, setActiveNavItem] = useState('algorithms');
+  const [activeNavItem, setActiveNavItem] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
 
@@ -503,7 +503,7 @@ export const MLShowcase = () => {
   */
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-100">
       {/* Enhanced Header with Navigation */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-blue-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
@@ -576,6 +576,16 @@ export const MLShowcase = () => {
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center space-x-8">
                 <button
+                  onClick={() => setActiveNavItem('home')}
+                  className={`text-sm font-medium transition-colors duration-200 ${
+                    activeNavItem === 'home' 
+                      ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
+                      : 'text-gray-600 hover:text-blue-600'
+                  }`}
+                >
+                  Home
+                </button>
+                <button
                   onClick={() => setActiveNavItem('algorithms')}
                   className={`text-sm font-medium transition-colors duration-200 ${
                     activeNavItem === 'algorithms' 
@@ -644,6 +654,7 @@ export const MLShowcase = () => {
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                 </svg>
                 <span className="text-blue-600 font-medium">
+                  {activeNavItem === 'home' && 'Home'}
                   {activeNavItem === 'algorithms' && 'ML Algorithms'}
                   {activeNavItem === 'pipelines' && 'ML Pipelines'}
                   {activeNavItem === 'rag' && 'RAG Systems'}
@@ -661,13 +672,268 @@ export const MLShowcase = () => {
       <main className="max-w-7xl mx-auto p-4">
         <div className="space-y-6">
         
+        {/* Home/Landing Page - Show when home nav is active */}
+        {activeNavItem === 'home' && (
+          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-4">
+            {/* Hero Section */}
+            <div className="text-center mb-8">
+              <div className="flex justify-center mb-4">
+                <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-lg">
+                  <Brain className="h-10 w-10 text-white" />
+                </div>
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+                Interactive AL ML Learning Hub
+              </h1>
+              
+              <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
+                Your comprehensive platform for exploring 
+                <span className="font-semibold text-blue-600"> AI</span> and 
+                <span className="font-semibold text-purple-600"> ML</span> technologies
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-6">
+                <button 
+                  onClick={() => setActiveNavItem('algorithms')}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  Start Learning
+                </button>
+                <button 
+                  onClick={() => setActiveNavItem('pipelines')}
+                  className="border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
+                >
+                  Explore Pipelines
+                </button>
+              </div>
+            </div>
+
+            {/* Features Overview */}
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                🚀 What You'll Discover
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* ML Algorithms Card */}
+                <div 
+                  onClick={() => setActiveNavItem('algorithms')}
+                  className="bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 bg-indigo-600 rounded-lg">
+                      <BarChart3 className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold text-indigo-900">ML Algorithms</h3>
+                  </div>
+                  <p className="text-indigo-700 text-sm mb-3">
+                    Interactive exploration of 5 ML algorithms with real-time parameter tuning.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded text-xs">XGBoost</span>
+                    <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded text-xs">SVM</span>
+                    <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded text-xs">k-NN</span>
+                  </div>
+                </div>
+
+                {/* ML Pipelines Card */}
+                <div 
+                  onClick={() => setActiveNavItem('pipelines')}
+                  className="bg-gradient-to-br from-emerald-100 to-teal-100 border border-emerald-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 bg-emerald-600 rounded-lg">
+                      <Settings className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold text-emerald-900">ML Pipelines</h3>
+                  </div>
+                  <p className="text-emerald-700 text-sm mb-3">
+                    End-to-end ML workflows and production-ready pipelines.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-1 bg-emerald-200 text-emerald-800 rounded text-xs">MLflow</span>
+                    <span className="px-2 py-1 bg-emerald-200 text-emerald-800 rounded text-xs">Docker</span>
+                    <span className="px-2 py-1 bg-emerald-200 text-emerald-800 rounded text-xs">AWS</span>
+                  </div>
+                </div>
+
+                {/* RAG Systems Card */}
+                <div 
+                  onClick={() => setActiveNavItem('rag')}
+                  className="bg-gradient-to-br from-teal-100 to-cyan-100 border border-teal-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 bg-teal-600 rounded-lg">
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-teal-900">RAG Systems</h3>
+                  </div>
+                  <p className="text-teal-700 text-sm mb-3">
+                    Retrieval-Augmented Generation for intelligent AI systems.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-1 bg-teal-200 text-teal-800 rounded text-xs">Vector DB</span>
+                    <span className="px-2 py-1 bg-teal-200 text-teal-800 rounded text-xs">LLMs</span>
+                    <span className="px-2 py-1 bg-teal-200 text-teal-800 rounded text-xs">Retrieval</span>
+                  </div>
+                </div>
+
+                {/* AI Chatbot Card */}
+                <div 
+                  onClick={() => setActiveNavItem('chatbot')}
+                  className="bg-gradient-to-br from-green-100 to-emerald-100 border border-green-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 bg-green-600 rounded-lg">
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-green-900">AI Chatbot</h3>
+                  </div>
+                  <p className="text-green-700 text-sm mb-3">
+                    Build intelligent conversational AI systems with NLP.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">NLP</span>
+                    <span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">Rasa</span>
+                    <span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">Dialogflow</span>
+                  </div>
+                </div>
+
+                {/* MLOps Card */}
+                <div 
+                  onClick={() => setActiveNavItem('mlops')}
+                  className="bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 bg-purple-600 rounded-lg">
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-purple-900">MLOps</h3>
+                  </div>
+                  <p className="text-purple-700 text-sm mb-3">
+                    ML lifecycle management and production deployment.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded text-xs">CI/CD</span>
+                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded text-xs">MLflow</span>
+                    <span className="px-2 py-1 bg-purple-200 text-purple-800 rounded text-xs">Monitoring</span>
+                  </div>
+                </div>
+
+                {/* Resources Card */}
+                <div 
+                  onClick={() => setActiveNavItem('resources')}
+                  className="bg-gradient-to-br from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 bg-gray-600 rounded-lg">
+                      <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Resources</h3>
+                  </div>
+                  <p className="text-gray-700 text-sm mb-3">
+                    Additional learning materials and documentation.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs">Docs</span>
+                    <span className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs">Datasets</span>
+                    <span className="px-2 py-1 bg-gray-200 text-gray-800 rounded text-xs">Tutorials</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Features - Compact */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
+                ✨ Platform Features
+              </h2>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="text-center p-3 bg-white/70 rounded-lg border border-blue-200">
+                  <div className="p-2 bg-blue-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                    <Play className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Interactive</h3>
+                  <p className="text-gray-600 text-xs">Real-time tuning</p>
+                </div>
+                
+                <div className="text-center p-3 bg-white/70 rounded-lg border border-green-200">
+                  <div className="p-2 bg-green-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                    <Code2 className="h-5 w-5 text-green-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Production Code</h3>
+                  <p className="text-gray-600 text-xs">Ready-to-use</p>
+                </div>
+                
+                <div className="text-center p-3 bg-white/70 rounded-lg border border-purple-200">
+                  <div className="p-2 bg-purple-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                    <BarChart3 className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Visualizations</h3>
+                  <p className="text-gray-600 text-xs">Interactive charts</p>
+                </div>
+                
+                <div className="text-center p-3 bg-white/70 rounded-lg border border-orange-200">
+                  <div className="p-2 bg-orange-100 rounded-full w-10 h-10 mx-auto mb-2 flex items-center justify-center">
+                    <CheckCircle2 className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-800 mb-1">Best Practices</h3>
+                  <p className="text-gray-600 text-xs">Industry standards</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Getting Started - Compact */}
+            <div className="bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300 rounded-lg p-4 text-center">
+              <h2 className="text-xl font-bold text-gray-800 mb-2">
+                🎯 Ready to Start?
+              </h2>
+              <p className="text-sm text-gray-700 mb-4">
+                Choose your learning path and start exploring AI/ML technologies today.
+              </p>
+              
+              <div className="flex flex-wrap gap-2 justify-center">
+                <button 
+                  onClick={() => setActiveNavItem('algorithms')}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                >
+                  ML Algorithms
+                </button>
+                <button 
+                  onClick={() => setActiveNavItem('chatbot')}
+                  className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-200"
+                >
+                  AI Chatbots
+                </button>
+                <button 
+                  onClick={() => setActiveNavItem('mlops')}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200"
+                >
+                  MLOps
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* ML Pipelines Section - Show when pipelines nav is active */}
         {activeNavItem === 'pipelines' && (
+          <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 rounded-2xl p-6">
           <>
             {/* ML Pipelines Collapsible Section */}
             <Collapsible open={mlPipelinesOpen} onOpenChange={(open: boolean) => setMlPipelinesOpen(open)}>
               <CollapsibleTrigger asChild>
-                <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300">
+                <div className="bg-gradient-to-r from-emerald-100 via-teal-100 to-cyan-100 border-2 border-emerald-300 rounded-xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-emerald-600 rounded-lg shadow-lg">
@@ -1505,13 +1771,15 @@ async def health_check():
           </CollapsibleContent>
         </Collapsible>
         </>
+        </div>
         )}
 
         {/* RAG Section - Show when rag nav is active */}
         {activeNavItem === 'rag' && (
+        <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 rounded-2xl p-6">
         <Collapsible open={ragOpen} onOpenChange={(open: boolean) => setRagOpen(open)}>
           <CollapsibleTrigger asChild>
-            <div className="bg-gradient-to-r from-teal-50 via-cyan-50 to-blue-50 border border-teal-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 mb-6">
+            <div className="bg-gradient-to-r from-teal-100 via-cyan-100 to-blue-100 border-2 border-teal-300 rounded-xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 mb-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-teal-600 rounded-lg shadow-lg">
@@ -1794,13 +2062,15 @@ async def health_check():
             </div>
           </CollapsibleContent>
         </Collapsible>
+        </div>
         )}
 
         {/* ML Algorithms Section - Show when algorithms nav is active */}
         {activeNavItem === 'algorithms' && (
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 rounded-2xl p-6">
         <>
         {/* Algorithm Selection Guide */}
-        <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200 rounded-xl p-6 shadow-sm mb-6">
+        <div className="bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 border-2 border-indigo-300 rounded-xl p-6 shadow-lg mb-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
             <div className="flex-1 min-w-0">
               <h2 className="text-xl md:text-2xl font-bold text-indigo-900 mb-2">
@@ -1814,8 +2084,7 @@ async def health_check():
               {/* Usage Instructions - Compact */}
               <div className="bg-white/70 rounded-lg border border-indigo-200 p-3 mb-4">
                 <p className="text-indigo-800 text-xs leading-tight">
-                  💡 How to use: Set your knowledge level → Click any algorithm tab → Adjust parameters →<br/>
-                  Click "Run Model" → Explore results and charts
+                  💡 How to use: Set your knowledge level → Click any algorithm tab → Adjust parameters → Click "Run Model" → Explore results and charts
                 </p>
               </div>
 
@@ -1879,7 +2148,7 @@ async def health_check():
         {/* Popular Machine Learning Algorithms Section */}
         <Collapsible open={mlAlgorithmsOpen} onOpenChange={(open: boolean) => setMlAlgorithmsOpen(open)}>
           <CollapsibleTrigger asChild>
-            <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-purple-50 border border-indigo-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 mb-6">
+            <div className="bg-gradient-to-r from-indigo-100 via-blue-100 to-purple-100 border-2 border-indigo-300 rounded-xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 mb-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-indigo-600 rounded-lg shadow-lg">
@@ -4160,13 +4429,15 @@ print(f"\\nClassification Report:\\n{classification_report(y_test, y_pred)}")`}
           </CollapsibleContent>
         </Collapsible>
         </>
+        </div>
         )}
 
         {/* AI Chatbot Section - Show when chatbot nav is active */}
         {activeNavItem === 'chatbot' && (
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-2xl p-6">
         <Collapsible open={chatbotOpen} onOpenChange={(open: boolean) => setChatbotOpen(open)}>
           <CollapsibleTrigger asChild>
-            <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border border-green-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 mb-6">
+            <div className="bg-gradient-to-r from-green-100 via-emerald-100 to-teal-100 border-2 border-green-300 rounded-xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 mb-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-green-600 rounded-lg shadow-lg">
@@ -4240,13 +4511,15 @@ print(f"\\nClassification Report:\\n{classification_report(y_test, y_pred)}")`}
             </div>
           </CollapsibleContent>
         </Collapsible>
+        </div>
         )}
 
         {/* MLOps Section - Show when mlops nav is active */}
         {activeNavItem === 'mlops' && (
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 rounded-2xl p-6">
         <Collapsible open={mlopsOpen} onOpenChange={(open: boolean) => setMlopsOpen(open)}>
           <CollapsibleTrigger asChild>
-            <div className="bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 border border-purple-200 rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition-all duration-300 mb-6">
+            <div className="bg-gradient-to-r from-purple-100 via-indigo-100 to-blue-100 border-2 border-purple-300 rounded-xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 mb-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-purple-600 rounded-lg shadow-lg">
@@ -4503,11 +4776,13 @@ print(f"\\nClassification Report:\\n{classification_report(y_test, y_pred)}")`}
             </div>
           </CollapsibleContent>
         </Collapsible>
+        </div>
         )}
 
         {/* Resources Section - Show when resources nav is active */}
         {activeNavItem === 'resources' && (
-        <div className="bg-gradient-to-r from-gray-50 via-blue-50 to-indigo-50 border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-zinc-50 rounded-2xl p-6">
+        <div className="bg-gradient-to-r from-gray-100 via-slate-100 to-zinc-100 border-2 border-gray-300 rounded-xl p-6 shadow-lg">
           <div className="text-center space-y-4">
             <div className="p-4 bg-indigo-600 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
               <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -4559,6 +4834,7 @@ print(f"\\nClassification Report:\\n{classification_report(y_test, y_pred)}")`}
               </div>
             </div>
           </div>
+        </div>
         </div>
         )}
 

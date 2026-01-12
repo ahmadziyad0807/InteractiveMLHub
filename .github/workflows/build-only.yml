@@ -1,0 +1,61 @@
+name: Build Only (Manual Deploy)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Build application
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          echo "Build completed successfully!"
+          echo "Build size:"
+          du -sh dist/
+          echo "Files in build:"
+          ls -la dist/
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+          retention-days: 30
+
+      - name: Build summary
+        run: |
+          echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ TypeScript compilation successful" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build completed without errors" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build artifacts uploaded" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Output" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          du -sh dist/ >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Manual Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "Download the build artifacts and deploy manually to your hosting provider." >> $GITHUB_STEP_SUMMARY

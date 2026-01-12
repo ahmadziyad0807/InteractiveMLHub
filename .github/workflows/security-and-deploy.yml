@@ -160,7 +160,7 @@ jobs:
           path: dist/
 
       - name: Deploy to Vercel (Preview)
-        uses: vercel/action@v1
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
@@ -183,7 +183,7 @@ jobs:
           path: dist/
 
       - name: Deploy to Vercel (Production)
-        uses: vercel/action@v1
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}

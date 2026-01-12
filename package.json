@@ -75,7 +75,7 @@
   },
   "homepage": "https://github.com/your-username/ml-algorithm-showcase#readme",
   "engines": {
-    "node": "18.x",
+    "node": "24.x",
     "npm": ">=8.0.0"
   }
 }

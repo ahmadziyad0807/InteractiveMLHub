@@ -181,6 +181,9 @@ export const MLShowcase = () => {
   // Collapsible state for MLOps section - controlled by navigation
   const [mlopsOpen, setMlopsOpen] = useState(activeNavItem === 'mlops');
 
+  // Collapsible state for LLMOps section - controlled by navigation
+  const [llmopsOpen, setLlmopsOpen] = useState(activeNavItem === 'llmops');
+
   // Collapsible states for MLOps sub-sections - Hidden for future use
   // const [mlopsCodeOpen, setMlopsCodeOpen] = useState({
   //   cicd: false,
@@ -213,6 +216,7 @@ export const MLShowcase = () => {
     setRagOpen(activeNavItem === 'rag');
     setChatbotOpen(activeNavItem === 'chatbot');
     setMlopsOpen(activeNavItem === 'mlops');
+    setLlmopsOpen(activeNavItem === 'llmops');
   }, [activeNavItem]);
 
   // Secure search handler
@@ -771,6 +775,16 @@ export const MLShowcase = () => {
                   MLOps
                 </button>
                 <button
+                  onClick={() => setActiveNavItem('llmops')}
+                  className={`text-sm font-medium transition-colors duration-200 ${
+                    activeNavItem === 'llmops' 
+                      ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
+                      : 'text-gray-600 hover:text-blue-600'
+                  }`}
+                >
+                  LLMOps
+                </button>
+                <button
                   onClick={() => setActiveNavItem('resources')}
                   className={`text-sm font-medium transition-colors duration-200 ${
                     activeNavItem === 'resources' 
@@ -795,6 +809,7 @@ export const MLShowcase = () => {
                   {activeNavItem === 'rag' && 'RAG Systems'}
                   {activeNavItem === 'chatbot' && 'AI Chatbot'}
                   {activeNavItem === 'mlops' && 'MLOps'}
+                  {activeNavItem === 'llmops' && 'LLMOps'}
                   {activeNavItem === 'resources' && 'Resources'}
                 </span>
               </div>
@@ -850,7 +865,7 @@ export const MLShowcase = () => {
                 🚀 What You'll Discover
               </h2>
               
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                 {/* ML Algorithms Card */}
                 <div 
                   onClick={() => setActiveNavItem('algorithms')}
@@ -957,6 +972,28 @@ export const MLShowcase = () => {
                   </div>
                 </div>
 
+                {/* LLMOps Card */}
+                <div 
+                  onClick={() => setActiveNavItem('llmops')}
+                  className="bg-gradient-to-br from-orange-100 to-red-100 border border-orange-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-1 mb-2">
+                    <div className="p-1 bg-orange-600 rounded">
+                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-sm font-bold text-orange-900">LLMOps</h3>
+                  </div>
+                  <p className="text-orange-700 text-xs mb-2">
+                    Large Language Model Operations.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-1 py-0.5 bg-orange-200 text-orange-800 rounded text-xs">LLMs</span>
+                    <span className="px-1 py-0.5 bg-orange-200 text-orange-800 rounded text-xs">Inference</span>
+                  </div>
+                </div>
+
                 {/* Resources Card */}
                 <div 
                   onClick={() => setActiveNavItem('resources')}
@@ -1049,6 +1086,12 @@ export const MLShowcase = () => {
                   className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200"
                 >
                   MLOps
+                </button>
+                <button 
+                  onClick={() => setActiveNavItem('llmops')}
+                  className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-200"
+                >
+                  LLMOps
                 </button>
               </div>
             </div>
@@ -2186,6 +2229,1100 @@ async def health_check():
                     <span className="px-3 py-1 bg-pink-100 text-pink-800 rounded-full text-xs font-medium">Qdrant</span>
                     <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">Milvus</span>
                   </div>
+                </div>
+
+                {/* Vector Databases Deep Dive */}
+                <div className="border-t border-teal-300 pt-6 mt-6">
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <div className="cursor-pointer hover:bg-teal-50 p-4 rounded-lg transition-colors duration-200 border border-teal-200">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-teal-900 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7c0-2.21-3.582-4-8-4S4 4.79 4 7z"/>
+                              <path d="M20 7c0 2.21-3.582 4-8 4S4 9.21 4 7"/>
+                            </svg>
+                            🗄️ Vector Databases & Embeddings
+                          </h3>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-teal-700 font-medium">Deep Dive</span>
+                            <ChevronDown className="h-4 w-4 text-teal-600" />
+                          </div>
+                        </div>
+                      </div>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="mt-4">
+                      <div className="space-y-6">
+                        
+                        {/* Vector Databases Overview */}
+                        <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-6 shadow-sm">
+                          <h4 className="text-lg font-semibold text-teal-900 mb-4 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            What are Vector Databases?
+                          </h4>
+                          
+                          <p className="text-teal-700 leading-relaxed mb-4">
+                            Vector databases are specialized storage systems designed to efficiently store, index, and query high-dimensional vector embeddings. 
+                            Unlike traditional databases that store structured data, vector databases excel at similarity search and semantic retrieval.
+                          </p>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white/70 p-4 rounded-lg border border-teal-200">
+                              <h5 className="font-semibold text-teal-800 mb-2">Traditional Databases</h5>
+                              <ul className="space-y-1 text-sm text-teal-700">
+                                <li>• Store structured data (rows, columns)</li>
+                                <li>• Exact match queries</li>
+                                <li>• SQL-based operations</li>
+                                <li>• ACID compliance</li>
+                              </ul>
+                            </div>
+                            
+                            <div className="bg-white/70 p-4 rounded-lg border border-teal-200">
+                              <h5 className="font-semibold text-teal-800 mb-2">Vector Databases</h5>
+                              <ul className="space-y-1 text-sm text-teal-700">
+                                <li>• Store high-dimensional vectors</li>
+                                <li>• Similarity-based queries</li>
+                                <li>• Approximate nearest neighbor (ANN)</li>
+                                <li>• Optimized for ML workloads</li>
+                              </ul>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 p-4 bg-gradient-to-r from-cyan-100 to-blue-100 rounded-lg border border-cyan-300">
+                            <h5 className="font-semibold text-teal-800 mb-2">Key Vector Database Features:</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                              <div className="flex items-center gap-2 text-teal-700">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <span>High-dimensional indexing</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-teal-700">
+                                <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                                <span>Similarity search algorithms</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-teal-700">
+                                <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                                <span>Horizontal scalability</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-teal-700">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                <span>Real-time updates</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-teal-700">
+                                <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
+                                <span>Metadata filtering</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-teal-700">
+                                <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+                                <span>Multi-modal support</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Embeddings Deep Dive */}
+                        <div className="bg-white/60 rounded-lg border border-teal-200 p-6">
+                          <h4 className="text-lg font-semibold text-teal-900 mb-4 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Understanding Embeddings
+                          </h4>
+                          
+                          <p className="text-teal-700 leading-relaxed mb-4">
+                            Embeddings are dense vector representations that capture semantic meaning of text, images, or other data types. 
+                            They transform human-readable content into numerical vectors that machines can process and compare.
+                          </p>
+
+                          <div className="space-y-4">
+                            {/* Embedding Process */}
+                            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
+                              <h5 className="font-semibold text-teal-800 mb-3">Embedding Generation Process</h5>
+                              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                <div className="text-center p-3 bg-white/70 rounded-lg border border-teal-200">
+                                  <div className="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
+                                  <h6 className="text-xs font-semibold text-teal-800 mb-1">Input Text</h6>
+                                  <p className="text-xs text-teal-700">"Machine learning"</p>
+                                </div>
+                                <div className="text-center p-3 bg-white/70 rounded-lg border border-teal-200">
+                                  <div className="w-8 h-8 bg-cyan-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
+                                  <h6 className="text-xs font-semibold text-teal-800 mb-1">Tokenization</h6>
+                                  <p className="text-xs text-teal-700">["machine", "learning"]</p>
+                                </div>
+                                <div className="text-center p-3 bg-white/70 rounded-lg border border-teal-200">
+                                  <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
+                                  <h6 className="text-xs font-semibold text-teal-800 mb-1">Model Processing</h6>
+                                  <p className="text-xs text-teal-700">Neural network</p>
+                                </div>
+                                <div className="text-center p-3 bg-white/70 rounded-lg border border-teal-200">
+                                  <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">4</div>
+                                  <h6 className="text-xs font-semibold text-teal-800 mb-1">Vector Output</h6>
+                                  <p className="text-xs text-teal-700">[0.2, -0.1, 0.8, ...]</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Popular Embedding Models */}
+                            <div className="bg-white/70 p-4 rounded-lg border border-teal-200">
+                              <h5 className="font-semibold text-teal-800 mb-3">Popular Embedding Models</h5>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <h6 className="font-semibold text-teal-800 text-sm">General Purpose</h6>
+                                  <div className="flex flex-wrap gap-1">
+                                    <span className="px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs">OpenAI text-embedding-ada-002</span>
+                                    <span className="px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs">Sentence-BERT</span>
+                                    <span className="px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs">E5-large</span>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <h6 className="font-semibold text-teal-800 text-sm">Specialized</h6>
+                                  <div className="flex flex-wrap gap-1">
+                                    <span className="px-2 py-1 bg-cyan-100 text-cyan-800 rounded text-xs">BGE-large</span>
+                                    <span className="px-2 py-1 bg-cyan-100 text-cyan-800 rounded text-xs">Instructor-XL</span>
+                                    <span className="px-2 py-1 bg-cyan-100 text-cyan-800 rounded text-xs">Cohere Embed</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Vector Dimensions */}
+                        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 rounded-xl p-6 shadow-sm">
+                          <h4 className="text-lg font-semibold text-teal-900 mb-4 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-.42-.94l1.329-2.05a2 2 0 00-.5-2.5L15.5 8.5a2 2 0 00-2.5-.5l-2.05 1.329a6 6 0 00-.94-.42l-.477-2.387a2 2 0 00-1.953-1.522H6.5a2 2 0 00-1.953 1.522l-.477 2.387a6 6 0 00-.94.42L1.08 7.5a2 2 0 00-2.5.5L-2.5 9.5a2 2 0 00-.5 2.5l1.329 2.05a6 6 0 00-.42.94l-2.387.477A2 2 0 00-5 17.5v1.077a2 2 0 001.522 1.953l2.387.477a6 6 0 00.42.94L.658 23.92a2 2 0 00.5 2.5L2.5 27.5a2 2 0 002.5.5l2.05-1.329a6 6 0 00.94.42l.477 2.387A2 2 0 0010.5 30h1.077a2 2 0 001.953-1.522l.477-2.387a6 6 0 00.94-.42l2.05 1.329a2 2 0 002.5-.5L20.5 25.5a2 2 0 00.5-2.5l-1.329-2.05a6 6 0 00.42-.94l2.387-.477A2 2 0 0023 17.5v-1.077a2 2 0 00-1.522-1.953z"/>
+                            </svg>
+                            Vector Dimensions & Performance
+                          </h4>
+                          
+                          <p className="text-teal-700 leading-relaxed mb-4">
+                            Vector dimensions significantly impact both the quality of semantic representation and computational performance. 
+                            Higher dimensions can capture more nuanced meanings but require more storage and computation.
+                          </p>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="bg-white/70 p-4 rounded-lg border border-cyan-200">
+                              <h5 className="font-semibold text-cyan-800 mb-2 flex items-center gap-2">
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                Low Dimensions (128-384)
+                              </h5>
+                              <ul className="space-y-1 text-sm text-cyan-700">
+                                <li>• Fast similarity search</li>
+                                <li>• Lower storage requirements</li>
+                                <li>• Good for simple tasks</li>
+                                <li>• Less semantic richness</li>
+                              </ul>
+                              <div className="mt-2 text-xs text-cyan-600">
+                                <strong>Use cases:</strong> Simple Q&A, basic search
+                              </div>
+                            </div>
+                            
+                            <div className="bg-white/70 p-4 rounded-lg border border-cyan-200">
+                              <h5 className="font-semibold text-cyan-800 mb-2 flex items-center gap-2">
+                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                Medium Dimensions (512-768)
+                              </h5>
+                              <ul className="space-y-1 text-sm text-cyan-700">
+                                <li>• Balanced performance</li>
+                                <li>• Good semantic capture</li>
+                                <li>• Moderate resource usage</li>
+                                <li>• Most common choice</li>
+                              </ul>
+                              <div className="mt-2 text-xs text-cyan-600">
+                                <strong>Use cases:</strong> General RAG, document search
+                              </div>
+                            </div>
+                            
+                            <div className="bg-white/70 p-4 rounded-lg border border-cyan-200">
+                              <h5 className="font-semibold text-cyan-800 mb-2 flex items-center gap-2">
+                                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                High Dimensions (1024-4096)
+                              </h5>
+                              <ul className="space-y-1 text-sm text-cyan-700">
+                                <li>• Rich semantic representation</li>
+                                <li>• Better for complex tasks</li>
+                                <li>• Higher computational cost</li>
+                                <li>• More storage needed</li>
+                              </ul>
+                              <div className="mt-2 text-xs text-cyan-600">
+                                <strong>Use cases:</strong> Complex reasoning, multi-modal
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 p-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg border border-blue-300">
+                            <h5 className="font-semibold text-cyan-800 mb-2">Dimension Selection Guidelines:</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                              <div className="flex items-start gap-2 text-cyan-700">
+                                <span className="text-blue-500 mt-1">•</span>
+                                <span><strong>Task Complexity:</strong> More complex tasks benefit from higher dimensions</span>
+                              </div>
+                              <div className="flex items-start gap-2 text-cyan-700">
+                                <span className="text-blue-500 mt-1">•</span>
+                                <span><strong>Data Volume:</strong> Large datasets may require dimension reduction</span>
+                              </div>
+                              <div className="flex items-start gap-2 text-cyan-700">
+                                <span className="text-blue-500 mt-1">•</span>
+                                <span><strong>Latency Requirements:</strong> Real-time apps need lower dimensions</span>
+                              </div>
+                              <div className="flex items-start gap-2 text-cyan-700">
+                                <span className="text-blue-500 mt-1">•</span>
+                                <span><strong>Resource Constraints:</strong> Consider memory and compute limits</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Chunking Strategies */}
+                        <div className="bg-white/60 rounded-lg border border-teal-200 p-6">
+                          <h4 className="text-lg font-semibold text-teal-900 mb-4 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Chunking Strategies for RAG
+                          </h4>
+                          
+                          <p className="text-teal-700 leading-relaxed mb-4">
+                            Chunking is the process of breaking down large documents into smaller, manageable pieces that can be effectively 
+                            processed by embedding models and retrieved by vector databases. The chunking strategy significantly impacts RAG performance.
+                          </p>
+
+                          <div className="space-y-4">
+                            {/* Chunking Methods */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
+                                <h5 className="font-semibold text-teal-800 mb-3">Fixed-Size Chunking</h5>
+                                <ul className="space-y-1 text-sm text-teal-700 mb-3">
+                                  <li>• Split by character/token count</li>
+                                  <li>• Simple and predictable</li>
+                                  <li>• May break semantic units</li>
+                                  <li>• Good for uniform content</li>
+                                </ul>
+                                <div className="text-xs text-teal-600">
+                                  <strong>Best for:</strong> Technical docs, structured content
+                                </div>
+                              </div>
+                              
+                              <div className="bg-gradient-to-r from-cyan-50 to-blue-50 p-4 rounded-lg border border-cyan-200">
+                                <h5 className="font-semibold text-cyan-800 mb-3">Semantic Chunking</h5>
+                                <ul className="space-y-1 text-sm text-cyan-700 mb-3">
+                                  <li>• Split by meaning/topics</li>
+                                  <li>• Preserves context better</li>
+                                  <li>• More complex to implement</li>
+                                  <li>• Variable chunk sizes</li>
+                                </ul>
+                                <div className="text-xs text-cyan-600">
+                                  <strong>Best for:</strong> Narrative text, articles
+                                </div>
+                              </div>
+                              
+                              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+                                <h5 className="font-semibold text-blue-800 mb-3">Hierarchical Chunking</h5>
+                                <ul className="space-y-1 text-sm text-blue-700 mb-3">
+                                  <li>• Multi-level chunk structure</li>
+                                  <li>• Maintains document hierarchy</li>
+                                  <li>• Better context preservation</li>
+                                  <li>• More storage overhead</li>
+                                </ul>
+                                <div className="text-xs text-blue-600">
+                                  <strong>Best for:</strong> Books, research papers
+                                </div>
+                              </div>
+                              
+                              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+                                <h5 className="font-semibold text-purple-800 mb-3">Sliding Window</h5>
+                                <ul className="space-y-1 text-sm text-purple-700 mb-3">
+                                  <li>• Overlapping chunks</li>
+                                  <li>• Reduces context loss</li>
+                                  <li>• Increased storage needs</li>
+                                  <li>• Better retrieval coverage</li>
+                                </ul>
+                                <div className="text-xs text-purple-600">
+                                  <strong>Best for:</strong> Dense information, code
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Chunking Parameters */}
+                            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-lg border border-teal-200">
+                              <h5 className="font-semibold text-teal-800 mb-3">Key Chunking Parameters</h5>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                  <h6 className="font-semibold text-teal-800 text-sm">Chunk Size</h6>
+                                  <div className="space-y-1 text-xs text-teal-700">
+                                    <div>• <strong>Small (100-300 tokens):</strong> Precise retrieval</div>
+                                    <div>• <strong>Medium (300-800 tokens):</strong> Balanced approach</div>
+                                    <div>• <strong>Large (800-1500 tokens):</strong> Rich context</div>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <h6 className="font-semibold text-teal-800 text-sm">Overlap</h6>
+                                  <div className="space-y-1 text-xs text-teal-700">
+                                    <div>• <strong>10-20%:</strong> Minimal redundancy</div>
+                                    <div>• <strong>20-50%:</strong> Good context preservation</div>
+                                    <div>• <strong>50%+:</strong> Maximum coverage</div>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <h6 className="font-semibold text-teal-800 text-sm">Separators</h6>
+                                  <div className="space-y-1 text-xs text-teal-700">
+                                    <div>• <strong>Paragraphs:</strong> Natural breaks</div>
+                                    <div>• <strong>Sentences:</strong> Semantic units</div>
+                                    <div>• <strong>Headers:</strong> Structural elements</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Code Examples */}
+                        <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl p-6 shadow-sm">
+                          <h4 className="text-lg font-semibold text-teal-900 mb-4 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                            </svg>
+                            Implementation Examples
+                          </h4>
+
+                          <div className="space-y-4">
+                            {/* Vector Database Setup */}
+                            <Collapsible>
+                              <CollapsibleTrigger asChild>
+                                <Button variant="outline" className="w-full flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7c0-2.21-3.582-4-8-4S4 4.79 4 7z"/>
+                                    </svg>
+                                    <span>1. Vector Database Setup with Chroma</span>
+                                  </div>
+                                  <ChevronDown className="h-4 w-4" />
+                                </Button>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-4">
+                                <div className="bg-gray-900 rounded-lg p-4 border border-teal-300">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <svg className="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7c0-2.21-3.582-4-8-4S4 4.79 4 7z"/>
+                                    </svg>
+                                    <h4 className="text-teal-400 font-semibold">Vector Database Implementation</h4>
+                                  </div>
+                                  <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# Vector Database Setup with ChromaDB
+import chromadb
+from chromadb.config import Settings
+from sentence_transformers import SentenceTransformer
+import numpy as np
+from typing import List, Dict, Any
+import uuid
+
+class VectorDatabaseManager:
+    def __init__(self, 
+                 collection_name: str = "rag_documents",
+                 embedding_model: str = "all-MiniLM-L6-v2",
+                 persist_directory: str = "./chroma_db"):
+        
+        # Initialize ChromaDB client
+        self.client = chromadb.PersistentClient(
+            path=persist_directory,
+            settings=Settings(
+                anonymized_telemetry=False,
+                allow_reset=True
+            )
+        )
+        
+        # Initialize embedding model
+        self.embedding_model = SentenceTransformer(embedding_model)
+        self.embedding_dimension = self.embedding_model.get_sentence_embedding_dimension()
+        
+        # Create or get collection
+        self.collection = self.client.get_or_create_collection(
+            name=collection_name,
+            metadata={"hnsw:space": "cosine"}  # Use cosine similarity
+        )
+        
+        print(f"Vector DB initialized with {self.embedding_dimension}D embeddings")
+    
+    def add_documents(self, 
+                     documents: List[str], 
+                     metadatas: List[Dict[str, Any]] = None,
+                     ids: List[str] = None) -> None:
+        """Add documents to the vector database"""
+        
+        if ids is None:
+            ids = [str(uuid.uuid4()) for _ in documents]
+        
+        if metadatas is None:
+            metadatas = [{"source": f"doc_{i}"} for i in range(len(documents))]
+        
+        # Generate embeddings
+        print(f"Generating embeddings for {len(documents)} documents...")
+        embeddings = self.embedding_model.encode(
+            documents, 
+            convert_to_numpy=True,
+            show_progress_bar=True
+        ).tolist()
+        
+        # Add to collection
+        self.collection.add(
+            embeddings=embeddings,
+            documents=documents,
+            metadatas=metadatas,
+            ids=ids
+        )
+        
+        print(f"Added {len(documents)} documents to vector database")
+    
+    def similarity_search(self, 
+                         query: str, 
+                         n_results: int = 5,
+                         where: Dict[str, Any] = None) -> Dict[str, Any]:
+        """Perform similarity search"""
+        
+        # Generate query embedding
+        query_embedding = self.embedding_model.encode([query]).tolist()
+        
+        # Search in collection
+        results = self.collection.query(
+            query_embeddings=query_embedding,
+            n_results=n_results,
+            where=where,  # Metadata filtering
+            include=["documents", "metadatas", "distances"]
+        )
+        
+        return {
+            "documents": results["documents"][0],
+            "metadatas": results["metadatas"][0],
+            "distances": results["distances"][0],
+            "query": query
+        }
+    
+    def get_collection_stats(self) -> Dict[str, Any]:
+        """Get collection statistics"""
+        count = self.collection.count()
+        return {
+            "total_documents": count,
+            "embedding_dimension": self.embedding_dimension,
+            "collection_name": self.collection.name
+        }
+
+# Usage Example
+if __name__ == "__main__":
+    # Initialize vector database
+    vector_db = VectorDatabaseManager(
+        collection_name="my_rag_collection",
+        embedding_model="all-MiniLM-L6-v2"  # 384 dimensions
+    )
+    
+    # Sample documents
+    documents = [
+        "Machine learning is a subset of artificial intelligence.",
+        "Vector databases store high-dimensional embeddings.",
+        "RAG combines retrieval with language generation.",
+        "Chunking strategies affect retrieval quality."
+    ]
+    
+    # Add documents
+    vector_db.add_documents(
+        documents=documents,
+        metadatas=[
+            {"topic": "ML", "type": "definition"},
+            {"topic": "Vector DB", "type": "definition"},
+            {"topic": "RAG", "type": "definition"},
+            {"topic": "Chunking", "type": "strategy"}
+        ]
+    )
+    
+    # Perform search
+    results = vector_db.similarity_search(
+        query="What is retrieval augmented generation?",
+        n_results=3
+    )
+    
+    print("Search Results:")
+    for i, (doc, metadata, distance) in enumerate(zip(
+        results["documents"], 
+        results["metadatas"], 
+        results["distances"]
+    )):
+        print(f"{i+1}. Distance: {distance:.3f}")
+        print(f"   Document: {doc}")
+        print(f"   Metadata: {metadata}")
+        print()
+`}
+                                  </pre>
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
+
+                            {/* Chunking Implementation */}
+                            <Collapsible>
+                              <CollapsibleTrigger asChild>
+                                <Button variant="outline" className="w-full flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span>2. Advanced Chunking Strategies</span>
+                                  </div>
+                                  <ChevronDown className="h-4 w-4" />
+                                </Button>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-4">
+                                <div className="bg-gray-900 rounded-lg p-4 border border-teal-300">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <svg className="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <h4 className="text-teal-400 font-semibold">Smart Chunking Implementation</h4>
+                                  </div>
+                                  <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# Advanced Chunking Strategies for RAG
+import re
+from typing import List, Dict, Tuple
+from dataclasses import dataclass
+import tiktoken
+from sentence_transformers import SentenceTransformer
+
+@dataclass
+class ChunkConfig:
+    chunk_size: int = 512  # tokens
+    overlap_size: int = 50  # tokens
+    min_chunk_size: int = 100  # tokens
+    separators: List[str] = None
+    
+    def __post_init__(self):
+        if self.separators is None:
+            self.separators = ["\\n\\n", "\\n", "\\. ", "\\? ", "\\! ", " "]
+
+class AdvancedChunker:
+    def __init__(self, config: ChunkConfig = None):
+        self.config = config or ChunkConfig()
+        self.tokenizer = tiktoken.get_encoding("cl100k_base")  # GPT-4 tokenizer
+        self.sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
+    
+    def count_tokens(self, text: str) -> int:
+        """Count tokens in text"""
+        return len(self.tokenizer.encode(text))
+    
+    def fixed_size_chunking(self, text: str) -> List[Dict[str, any]]:
+        """Fixed-size chunking with overlap"""
+        chunks = []
+        tokens = self.tokenizer.encode(text)
+        
+        start = 0
+        chunk_id = 0
+        
+        while start < len(tokens):
+            # Calculate end position
+            end = min(start + self.config.chunk_size, len(tokens))
+            
+            # Extract chunk tokens
+            chunk_tokens = tokens[start:end]
+            chunk_text = self.tokenizer.decode(chunk_tokens)
+            
+            # Skip if chunk is too small (except for last chunk)
+            if len(chunk_tokens) < self.config.min_chunk_size and end < len(tokens):
+                start += self.config.chunk_size - self.config.overlap_size
+                continue
+            
+            chunks.append({
+                "id": f"chunk_{chunk_id}",
+                "text": chunk_text.strip(),
+                "token_count": len(chunk_tokens),
+                "start_pos": start,
+                "end_pos": end,
+                "method": "fixed_size"
+            })
+            
+            chunk_id += 1
+            
+            # Move start position with overlap
+            if end >= len(tokens):
+                break
+            start = end - self.config.overlap_size
+        
+        return chunks
+    
+    def semantic_chunking(self, text: str, similarity_threshold: float = 0.5) -> List[Dict[str, any]]:
+        """Semantic chunking based on sentence similarity"""
+        # Split into sentences
+        sentences = re.split(r'(?<=[.!?])\\s+', text)
+        if not sentences:
+            return []
+        
+        # Generate embeddings for sentences
+        embeddings = self.sentence_model.encode(sentences)
+        
+        chunks = []
+        current_chunk = [sentences[0]]
+        current_embedding = embeddings[0:1]
+        chunk_id = 0
+        
+        for i in range(1, len(sentences)):
+            # Calculate similarity with current chunk
+            chunk_mean_embedding = current_embedding.mean(axis=0)
+            similarity = self.cosine_similarity(
+                chunk_mean_embedding, 
+                embeddings[i]
+            )
+            
+            # Check if we should start a new chunk
+            should_split = (
+                similarity < similarity_threshold or 
+                self.count_tokens(' '.join(current_chunk + [sentences[i]])) > self.config.chunk_size
+            )
+            
+            if should_split and len(current_chunk) > 0:
+                # Save current chunk
+                chunk_text = ' '.join(current_chunk)
+                chunks.append({
+                    "id": f"semantic_chunk_{chunk_id}",
+                    "text": chunk_text.strip(),
+                    "token_count": self.count_tokens(chunk_text),
+                    "sentence_count": len(current_chunk),
+                    "avg_similarity": float(similarity),
+                    "method": "semantic"
+                })
+                
+                chunk_id += 1
+                current_chunk = [sentences[i]]
+                current_embedding = embeddings[i:i+1]
+            else:
+                # Add to current chunk
+                current_chunk.append(sentences[i])
+                current_embedding = embeddings[max(0, i-len(current_chunk)+1):i+1]
+        
+        # Add final chunk
+        if current_chunk:
+            chunk_text = ' '.join(current_chunk)
+            chunks.append({
+                "id": f"semantic_chunk_{chunk_id}",
+                "text": chunk_text.strip(),
+                "token_count": self.count_tokens(chunk_text),
+                "sentence_count": len(current_chunk),
+                "method": "semantic"
+            })
+        
+        return chunks
+    
+    def hierarchical_chunking(self, text: str) -> List[Dict[str, any]]:
+        """Hierarchical chunking preserving document structure"""
+        chunks = []
+        chunk_id = 0
+        
+        # Split by major sections (double newlines)
+        sections = re.split(r'\\n\\n+', text)
+        
+        for section_idx, section in enumerate(sections):
+            if not section.strip():
+                continue
+            
+            # Check if section fits in one chunk
+            if self.count_tokens(section) <= self.config.chunk_size:
+                chunks.append({
+                    "id": f"hierarchical_chunk_{chunk_id}",
+                    "text": section.strip(),
+                    "token_count": self.count_tokens(section),
+                    "section_id": section_idx,
+                    "level": "section",
+                    "method": "hierarchical"
+                })
+                chunk_id += 1
+            else:
+                # Split large sections into paragraphs
+                paragraphs = re.split(r'\\n', section)
+                current_chunk = []
+                current_tokens = 0
+                
+                for para in paragraphs:
+                    para_tokens = self.count_tokens(para)
+                    
+                    if current_tokens + para_tokens > self.config.chunk_size and current_chunk:
+                        # Save current chunk
+                        chunk_text = '\\n'.join(current_chunk)
+                        chunks.append({
+                            "id": f"hierarchical_chunk_{chunk_id}",
+                            "text": chunk_text.strip(),
+                            "token_count": current_tokens,
+                            "section_id": section_idx,
+                            "level": "paragraph_group",
+                            "method": "hierarchical"
+                        })
+                        chunk_id += 1
+                        current_chunk = [para]
+                        current_tokens = para_tokens
+                    else:
+                        current_chunk.append(para)
+                        current_tokens += para_tokens
+                
+                # Add remaining paragraphs
+                if current_chunk:
+                    chunk_text = '\\n'.join(current_chunk)
+                    chunks.append({
+                        "id": f"hierarchical_chunk_{chunk_id}",
+                        "text": chunk_text.strip(),
+                        "token_count": current_tokens,
+                        "section_id": section_idx,
+                        "level": "paragraph_group",
+                        "method": "hierarchical"
+                    })
+                    chunk_id += 1
+        
+        return chunks
+    
+    def sliding_window_chunking(self, text: str) -> List[Dict[str, any]]:
+        """Sliding window chunking with configurable overlap"""
+        chunks = []
+        tokens = self.tokenizer.encode(text)
+        
+        # Calculate step size
+        step_size = self.config.chunk_size - self.config.overlap_size
+        
+        for i in range(0, len(tokens), step_size):
+            end = min(i + self.config.chunk_size, len(tokens))
+            chunk_tokens = tokens[i:end]
+            
+            if len(chunk_tokens) < self.config.min_chunk_size:
+                break
+            
+            chunk_text = self.tokenizer.decode(chunk_tokens)
+            
+            chunks.append({
+                "id": f"sliding_chunk_{len(chunks)}",
+                "text": chunk_text.strip(),
+                "token_count": len(chunk_tokens),
+                "start_token": i,
+                "end_token": end,
+                "overlap_ratio": self.config.overlap_size / self.config.chunk_size,
+                "method": "sliding_window"
+            })
+        
+        return chunks
+    
+    @staticmethod
+    def cosine_similarity(a, b):
+        """Calculate cosine similarity between two vectors"""
+        import numpy as np
+        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    
+    def chunk_document(self, text: str, method: str = "fixed_size") -> List[Dict[str, any]]:
+        """Main chunking method with strategy selection"""
+        
+        if method == "fixed_size":
+            return self.fixed_size_chunking(text)
+        elif method == "semantic":
+            return self.semantic_chunking(text)
+        elif method == "hierarchical":
+            return self.hierarchical_chunking(text)
+        elif method == "sliding_window":
+            return self.sliding_window_chunking(text)
+        else:
+            raise ValueError(f"Unknown chunking method: {method}")
+
+# Usage Example
+if __name__ == "__main__":
+    # Sample document
+    document = """
+    Machine Learning Overview
+    
+    Machine learning is a subset of artificial intelligence that focuses on algorithms 
+    that can learn and make decisions from data. It has three main types: supervised, 
+    unsupervised, and reinforcement learning.
+    
+    Supervised Learning
+    
+    Supervised learning uses labeled training data to learn a mapping function. 
+    Common algorithms include linear regression, decision trees, and neural networks.
+    
+    Applications include image classification, spam detection, and medical diagnosis.
+    """
+    
+    # Initialize chunker
+    config = ChunkConfig(chunk_size=100, overlap_size=20)
+    chunker = AdvancedChunker(config)
+    
+    # Test different chunking methods
+    methods = ["fixed_size", "semantic", "hierarchical", "sliding_window"]
+    
+    for method in methods:
+        print(f"\\n=== {method.upper()} CHUNKING ===")
+        chunks = chunker.chunk_document(document, method=method)
+        
+        for chunk in chunks:
+            print(f"ID: {chunk['id']}")
+            print(f"Tokens: {chunk['token_count']}")
+            print(f"Text: {chunk['text'][:100]}...")
+            print("-" * 50)
+`}
+                                  </pre>
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
+
+                            {/* Complete RAG Pipeline */}
+                            <Collapsible>
+                              <CollapsibleTrigger asChild>
+                                <Button variant="outline" className="w-full flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    <span>3. Complete RAG Pipeline</span>
+                                  </div>
+                                  <ChevronDown className="h-4 w-4" />
+                                </Button>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="mt-4">
+                                <div className="bg-gray-900 rounded-lg p-4 border border-teal-300">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <svg className="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    <h4 className="text-teal-400 font-semibold">End-to-End RAG Implementation</h4>
+                                  </div>
+                                  <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# Complete RAG Pipeline Implementation
+from typing import List, Dict, Any, Optional
+import openai
+from dataclasses import dataclass
+
+@dataclass
+class RAGConfig:
+    embedding_model: str = "text-embedding-ada-002"
+    llm_model: str = "gpt-3.5-turbo"
+    chunk_size: int = 512
+    overlap_size: int = 50
+    top_k_retrieval: int = 5
+    temperature: float = 0.7
+    max_tokens: int = 500
+
+class RAGPipeline:
+    def __init__(self, config: RAGConfig = None):
+        self.config = config or RAGConfig()
+        self.vector_db = VectorDatabaseManager()
+        self.chunker = AdvancedChunker(
+            ChunkConfig(
+                chunk_size=self.config.chunk_size,
+                overlap_size=self.config.overlap_size
+            )
+        )
+        
+        # Initialize OpenAI client
+        openai.api_key = "your-api-key-here"
+    
+    def ingest_documents(self, 
+                        documents: List[str], 
+                        metadatas: List[Dict[str, Any]] = None,
+                        chunking_method: str = "semantic") -> Dict[str, Any]:
+        """Ingest and process documents into the RAG system"""
+        
+        all_chunks = []
+        all_metadatas = []
+        
+        for i, doc in enumerate(documents):
+            # Chunk the document
+            chunks = self.chunker.chunk_document(doc, method=chunking_method)
+            
+            # Prepare metadata for each chunk
+            base_metadata = metadatas[i] if metadatas else {}
+            
+            for chunk in chunks:
+                chunk_metadata = {
+                    **base_metadata,
+                    "document_id": i,
+                    "chunk_id": chunk["id"],
+                    "chunk_method": chunking_method,
+                    "token_count": chunk["token_count"]
+                }
+                
+                all_chunks.append(chunk["text"])
+                all_metadatas.append(chunk_metadata)
+        
+        # Add to vector database
+        self.vector_db.add_documents(
+            documents=all_chunks,
+            metadatas=all_metadatas
+        )
+        
+        return {
+            "total_documents": len(documents),
+            "total_chunks": len(all_chunks),
+            "chunking_method": chunking_method,
+            "avg_chunk_size": sum(len(chunk.split()) for chunk in all_chunks) / len(all_chunks)
+        }
+    
+    def retrieve_context(self, 
+                        query: str, 
+                        filters: Dict[str, Any] = None) -> Dict[str, Any]:
+        """Retrieve relevant context for a query"""
+        
+        # Perform similarity search
+        search_results = self.vector_db.similarity_search(
+            query=query,
+            n_results=self.config.top_k_retrieval,
+            where=filters
+        )
+        
+        # Rank and filter results
+        ranked_results = []
+        for doc, metadata, distance in zip(
+            search_results["documents"],
+            search_results["metadatas"],
+            search_results["distances"]
+        ):
+            ranked_results.append({
+                "text": doc,
+                "metadata": metadata,
+                "similarity_score": 1 - distance,  # Convert distance to similarity
+                "relevance_score": self._calculate_relevance(query, doc)
+            })
+        
+        # Sort by relevance score
+        ranked_results.sort(key=lambda x: x["relevance_score"], reverse=True)
+        
+        return {
+            "query": query,
+            "retrieved_chunks": ranked_results,
+            "context": "\\n\\n".join([r["text"] for r in ranked_results])
+        }
+    
+    def generate_response(self, 
+                         query: str, 
+                         context: str,
+                         system_prompt: Optional[str] = None) -> Dict[str, Any]:
+        """Generate response using retrieved context"""
+        
+        if system_prompt is None:
+            system_prompt = """You are a helpful AI assistant. Use the provided context to answer the user's question accurately and comprehensively. If the context doesn't contain enough information to answer the question, say so clearly."""
+        
+        # Construct the prompt
+        prompt = f"""Context:
+{context}
+
+Question: {query}
+
+Please provide a detailed answer based on the context above."""
+        
+        try:
+            # Generate response using OpenAI
+            response = openai.ChatCompletion.create(
+                model=self.config.llm_model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=self.config.temperature,
+                max_tokens=self.config.max_tokens
+            )
+            
+            return {
+                "query": query,
+                "response": response.choices[0].message.content,
+                "model": self.config.llm_model,
+                "context_used": context,
+                "token_usage": response.usage.total_tokens
+            }
+            
+        except Exception as e:
+            return {
+                "query": query,
+                "response": f"Error generating response: {str(e)}",
+                "error": True
+            }
+    
+    def query(self, 
+             question: str, 
+             filters: Dict[str, Any] = None,
+             include_sources: bool = True) -> Dict[str, Any]:
+        """Complete RAG query pipeline"""
+        
+        # Step 1: Retrieve relevant context
+        retrieval_results = self.retrieve_context(question, filters)
+        
+        # Step 2: Generate response
+        generation_results = self.generate_response(
+            query=question,
+            context=retrieval_results["context"]
+        )
+        
+        # Step 3: Compile final response
+        response = {
+            "question": question,
+            "answer": generation_results["response"],
+            "retrieval_info": {
+                "chunks_retrieved": len(retrieval_results["retrieved_chunks"]),
+                "top_similarity_score": max([r["similarity_score"] for r in retrieval_results["retrieved_chunks"]]) if retrieval_results["retrieved_chunks"] else 0
+            }
+        }
+        
+        if include_sources:
+            response["sources"] = [
+                {
+                    "text": chunk["text"][:200] + "...",
+                    "metadata": chunk["metadata"],
+                    "similarity_score": chunk["similarity_score"]
+                }
+                for chunk in retrieval_results["retrieved_chunks"][:3]  # Top 3 sources
+            ]
+        
+        return response
+    
+    def _calculate_relevance(self, query: str, document: str) -> float:
+        """Calculate relevance score between query and document"""
+        # Simple keyword-based relevance (can be enhanced with ML models)
+        query_words = set(query.lower().split())
+        doc_words = set(document.lower().split())
+        
+        if not query_words:
+            return 0.0
+        
+        intersection = query_words.intersection(doc_words)
+        return len(intersection) / len(query_words)
+
+# Usage Example
+if __name__ == "__main__":
+    # Initialize RAG pipeline
+    config = RAGConfig(
+        chunk_size=300,
+        overlap_size=50,
+        top_k_retrieval=3
+    )
+    rag = RAGPipeline(config)
+    
+    # Sample documents
+    documents = [
+        "Vector databases are specialized systems for storing and querying high-dimensional vectors...",
+        "Chunking strategies in RAG systems determine how documents are split for processing...",
+        "Embedding models convert text into numerical representations for similarity search..."
+    ]
+    
+    # Ingest documents
+    ingestion_stats = rag.ingest_documents(
+        documents=documents,
+        chunking_method="semantic"
+    )
+    print(f"Ingested {ingestion_stats['total_chunks']} chunks")
+    
+    # Query the system
+    result = rag.query("What are vector databases?")
+    print(f"Question: {result['question']}")
+    print(f"Answer: {result['answer']}")
+    print(f"Sources: {len(result['sources'])} chunks used")
+`}
+                                  </pre>
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          </div>
+                        </div>
+
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
                 </div>
               </div>
             </div>
@@ -5866,6 +7003,948 @@ volumes:
           </div>
         </div>
         </div>
+        )}
+
+        {/* LLMOps Section - Show when llmops nav is active */}
+        {activeNavItem === 'llmops' && (
+          <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 rounded-2xl p-6">
+            
+            {/* LLMOps Main Section */}
+            <Collapsible open={llmopsOpen} onOpenChange={(open: boolean) => setLlmopsOpen(open)}>
+              <CollapsibleTrigger asChild>
+                <div className="bg-gradient-to-r from-orange-100 via-red-100 to-pink-100 border-2 border-orange-300 rounded-xl p-4 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-orange-600 rounded-lg shadow-lg">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-orange-900">
+                          🧠 LLMOps (Large Language Model Operations)
+                        </h2>
+                        <p className="text-sm text-orange-600">Specialized Operations for Large Language Models</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-orange-700 font-medium">
+                        {llmopsOpen ? 'Hide Details' : 'Learn More'}
+                      </span>
+                      {llmopsOpen ? (
+                        <ChevronUp className="h-5 w-5 text-orange-600" />
+                      ) : (
+                        <ChevronDown className="h-5 w-5 text-orange-600" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleTrigger>
+
+              <CollapsibleContent className="mt-4">
+                <div className="space-y-6">
+                  
+                  {/* LLMOps vs MLOps Comparison */}
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold text-orange-900 mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      LLMOps vs MLOps: Key Differences
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* MLOps Column */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-purple-200">
+                        <h4 className="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                          <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                          Traditional MLOps
+                        </h4>
+                        <ul className="space-y-2 text-sm text-purple-700">
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>Focuses on structured data and traditional ML models</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>Model sizes typically under 1GB</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>Training on single machines or small clusters</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>Feature engineering and data preprocessing focus</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-purple-500 mt-1">•</span>
+                            <span>Standard deployment patterns (REST APIs, batch)</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* LLMOps Column */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <h4 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
+                          <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                          LLMOps (Large Language Models)
+                        </h4>
+                        <ul className="space-y-2 text-sm text-orange-700">
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-500 mt-1">•</span>
+                            <span>Handles unstructured text data and massive language models</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-500 mt-1">•</span>
+                            <span>Model sizes from 1GB to 1TB+ (billions of parameters)</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-500 mt-1">•</span>
+                            <span>Distributed training across GPU clusters</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-500 mt-1">•</span>
+                            <span>Prompt engineering and fine-tuning focus</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-orange-500 mt-1">•</span>
+                            <span>Specialized inference optimization (quantization, caching)</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 p-4 bg-gradient-to-r from-orange-100 to-red-100 rounded-lg border border-orange-300">
+                      <h5 className="font-semibold text-orange-800 mb-2">Key LLMOps Challenges:</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                        <div className="flex items-center gap-2 text-orange-700">
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          <span>Massive computational requirements</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-orange-700">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                          <span>Complex prompt engineering</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-orange-700">
+                          <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                          <span>Inference latency optimization</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-orange-700">
+                          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                          <span>Model versioning at scale</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-orange-700">
+                          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                          <span>Safety and alignment</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-orange-700">
+                          <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                          <span>Cost optimization</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* LLMOps Implementation Steps */}
+                  <div className="bg-white/60 rounded-lg border border-orange-200 p-6">
+                    <h3 className="text-lg font-semibold text-orange-900 mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-.42-.94l1.329-2.05a2 2 0 00-.5-2.5L15.5 8.5a2 2 0 00-2.5-.5l-2.05 1.329a6 6 0 00-.94-.42l-.477-2.387a2 2 0 00-1.953-1.522H6.5a2 2 0 00-1.953 1.522l-.477 2.387a6 6 0 00-.94.42L1.08 7.5a2 2 0 00-2.5.5L-2.5 9.5a2 2 0 00-.5 2.5l1.329 2.05a6 6 0 00-.42.94l-2.387.477A2 2 0 00-5 17.5v1.077a2 2 0 001.522 1.953l2.387.477a6 6 0 00.42.94L.658 23.92a2 2 0 00.5 2.5L2.5 27.5a2 2 0 002.5.5l2.05-1.329a6 6 0 00.94.42l.477 2.387A2 2 0 0010.5 30h1.077a2 2 0 001.953-1.522l.477-2.387a6 6 0 00.94-.42l2.05 1.329a2 2 0 002.5-.5L20.5 25.5a2 2 0 00.5-2.5l-1.329-2.05a6 6 0 00.42-.94l2.387-.477A2 2 0 0023 17.5v-1.077a2 2 0 00-1.522-1.953z"/>
+                      </svg>
+                      LLMOps Implementation Steps
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      {/* Step 1 */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            1
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-orange-800 mb-2">Model Selection & Architecture Design</h5>
+                            <p className="text-sm text-orange-700 mb-3">
+                              Choose appropriate LLM architecture (GPT, BERT, T5, etc.) based on use case requirements, computational constraints, and performance needs.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Model Architecture</span>
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Parameter Count</span>
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Use Case Analysis</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 2 */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            2
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-orange-800 mb-2">Data Pipeline & Preprocessing</h5>
+                            <p className="text-sm text-orange-700 mb-3">
+                              Build scalable data pipelines for text preprocessing, tokenization, and dataset preparation. Handle massive text corpora efficiently.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Text Processing</span>
+                              <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Tokenization</span>
+                              <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Data Quality</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 3 */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            3
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-orange-800 mb-2">Distributed Training & Fine-tuning</h5>
+                            <p className="text-sm text-orange-700 mb-3">
+                              Implement distributed training strategies, gradient accumulation, and efficient fine-tuning techniques like LoRA, QLoRA, or full parameter tuning.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Distributed Training</span>
+                              <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">LoRA/QLoRA</span>
+                              <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">GPU Optimization</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 4 */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            4
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-orange-800 mb-2">Model Optimization & Quantization</h5>
+                            <p className="text-sm text-orange-700 mb-3">
+                              Apply model compression techniques, quantization (INT8, INT4), pruning, and knowledge distillation to reduce model size and inference costs.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Quantization</span>
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Model Compression</span>
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Inference Speed</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 5 */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            5
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-orange-800 mb-2">Deployment & Serving Infrastructure</h5>
+                            <p className="text-sm text-orange-700 mb-3">
+                              Deploy models using specialized serving frameworks like vLLM, TensorRT-LLM, or custom solutions with load balancing and auto-scaling.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Model Serving</span>
+                              <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Load Balancing</span>
+                              <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Auto-scaling</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Step 6 */}
+                      <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            6
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-orange-800 mb-2">Monitoring & Evaluation</h5>
+                            <p className="text-sm text-orange-700 mb-3">
+                              Implement comprehensive monitoring for model performance, safety metrics, cost tracking, and continuous evaluation of model outputs.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Performance Monitoring</span>
+                              <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Safety Metrics</span>
+                              <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Cost Tracking</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Code Examples Section */}
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold text-orange-900 mb-4 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                      </svg>
+                      LLMOps Code Examples
+                    </h3>
+
+                    <div className="space-y-4">
+                      {/* Example 1: Model Loading and Optimization */}
+                      <Collapsible>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="outline" className="w-full flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                              </svg>
+                              <span>1. Model Loading & Quantization with Transformers</span>
+                            </div>
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-4">
+                          <div className="bg-gray-900 rounded-lg p-4 border border-orange-300">
+                            <div className="flex items-center gap-2 mb-3">
+                              <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                              </svg>
+                              <h4 className="text-orange-400 font-semibold">Optimized Model Loading</h4>
+                            </div>
+                            <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# LLMOps: Efficient Model Loading with Quantization
+import torch
+from transformers import (
+    AutoTokenizer, 
+    AutoModelForCausalLM, 
+    BitsAndBytesConfig,
+    pipeline
+)
+from peft import LoraConfig, get_peft_model
+import logging
+
+# Configure logging for LLMOps monitoring
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class LLMOpsModelManager:
+    def __init__(self, model_name: str, quantization_config: dict = None):
+        self.model_name = model_name
+        self.quantization_config = quantization_config or {
+            "load_in_4bit": True,
+            "bnb_4bit_compute_dtype": torch.float16,
+            "bnb_4bit_use_double_quant": True,
+            "bnb_4bit_quant_type": "nf4"
+        }
+        self.model = None
+        self.tokenizer = None
+        
+    def load_model(self):
+        """Load model with quantization for efficient inference"""
+        try:
+            logger.info(f"Loading model: {self.model_name}")
+            
+            # Configure quantization for memory efficiency
+            quantization_config = BitsAndBytesConfig(**self.quantization_config)
+            
+            # Load tokenizer
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.model_name,
+                trust_remote_code=True,
+                padding_side="left"
+            )
+            
+            # Add padding token if missing
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+            
+            # Load model with quantization
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name,
+                quantization_config=quantization_config,
+                device_map="auto",
+                trust_remote_code=True,
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True
+            )
+            
+            logger.info("Model loaded successfully")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to load model: {str(e)}")
+            return False
+    
+    def setup_lora_fine_tuning(self, target_modules: list = None):
+        """Setup LoRA for parameter-efficient fine-tuning"""
+        if target_modules is None:
+            target_modules = ["q_proj", "v_proj", "k_proj", "o_proj"]
+        
+        lora_config = LoraConfig(
+            r=16,  # Rank
+            lora_alpha=32,  # LoRA scaling parameter
+            target_modules=target_modules,
+            lora_dropout=0.1,
+            bias="none",
+            task_type="CAUSAL_LM"
+        )
+        
+        self.model = get_peft_model(self.model, lora_config)
+        logger.info("LoRA configuration applied")
+        
+    def generate_response(self, prompt: str, max_length: int = 512):
+        """Generate response with optimized inference"""
+        if not self.model or not self.tokenizer:
+            raise ValueError("Model not loaded. Call load_model() first.")
+        
+        # Tokenize input
+        inputs = self.tokenizer(
+            prompt, 
+            return_tensors="pt", 
+            padding=True, 
+            truncation=True
+        ).to(self.model.device)
+        
+        # Generate with optimized parameters
+        with torch.no_grad():
+            outputs = self.model.generate(
+                **inputs,
+                max_length=max_length,
+                do_sample=True,
+                temperature=0.7,
+                top_p=0.9,
+                pad_token_id=self.tokenizer.eos_token_id,
+                use_cache=True  # Enable KV cache for faster inference
+            )
+        
+        # Decode response
+        response = self.tokenizer.decode(
+            outputs[0][inputs['input_ids'].shape[1]:], 
+            skip_special_tokens=True
+        )
+        
+        return response.strip()
+
+# Usage Example
+if __name__ == "__main__":
+    # Initialize LLMOps manager
+    llm_manager = LLMOpsModelManager("microsoft/DialoGPT-medium")
+    
+    # Load model with quantization
+    if llm_manager.load_model():
+        # Setup for fine-tuning (optional)
+        llm_manager.setup_lora_fine_tuning()
+        
+        # Generate response
+        prompt = "What are the benefits of LLMOps?"
+        response = llm_manager.generate_response(prompt)
+        print(f"Response: {response}")
+    
+    # Monitor GPU memory usage
+    if torch.cuda.is_available():
+        print(f"GPU Memory: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
+`}
+                            </pre>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Example 2: Distributed Training */}
+                      <Collapsible>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="outline" className="w-full flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                              </svg>
+                              <span>2. Distributed Training with DeepSpeed</span>
+                            </div>
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-4">
+                          <div className="bg-gray-900 rounded-lg p-4 border border-orange-300">
+                            <div className="flex items-center gap-2 mb-3">
+                              <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                              </svg>
+                              <h4 className="text-orange-400 font-semibold">Scalable Training Pipeline</h4>
+                            </div>
+                            <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# LLMOps: Distributed Training with DeepSpeed ZeRO
+import deepspeed
+import torch
+from torch.utils.data import DataLoader, DistributedSampler
+from transformers import (
+    AutoTokenizer, 
+    AutoModelForCausalLM,
+    TrainingArguments,
+    Trainer
+)
+import json
+import os
+
+class LLMOpsDistributedTrainer:
+    def __init__(self, model_name: str, config_path: str = None):
+        self.model_name = model_name
+        self.config_path = config_path
+        self.deepspeed_config = self._get_deepspeed_config()
+        
+    def _get_deepspeed_config(self):
+        """DeepSpeed ZeRO Stage 3 configuration for large models"""
+        return {
+            "fp16": {
+                "enabled": True,
+                "loss_scale": 0,
+                "loss_scale_window": 1000,
+                "initial_scale_power": 16,
+                "hysteresis": 2,
+                "min_loss_scale": 1
+            },
+            "zero_optimization": {
+                "stage": 3,  # ZeRO Stage 3 for maximum memory efficiency
+                "offload_optimizer": {
+                    "device": "cpu",
+                    "pin_memory": True
+                },
+                "offload_param": {
+                    "device": "cpu",
+                    "pin_memory": True
+                },
+                "overlap_comm": True,
+                "contiguous_gradients": True,
+                "sub_group_size": 1e9,
+                "reduce_bucket_size": "auto",
+                "stage3_prefetch_bucket_size": "auto",
+                "stage3_param_persistence_threshold": "auto",
+                "stage3_max_live_parameters": 1e9,
+                "stage3_max_reuse_distance": 1e9,
+                "gather_16bit_weights_on_model_save": True
+            },
+            "gradient_accumulation_steps": 4,
+            "gradient_clipping": 1.0,
+            "steps_per_print": 100,
+            "train_batch_size": "auto",
+            "train_micro_batch_size_per_gpu": "auto",
+            "wall_clock_breakdown": False
+        }
+    
+    def setup_distributed_training(self):
+        """Initialize distributed training environment"""
+        # Initialize distributed training
+        deepspeed.init_distributed()
+        
+        # Load model and tokenizer
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        if self.tokenizer.pad_token is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+            
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_name,
+            torch_dtype=torch.float16
+        )
+        
+        # Enable gradient checkpointing for memory efficiency
+        self.model.gradient_checkpointing_enable()
+        
+    def create_training_arguments(self, output_dir: str):
+        """Create optimized training arguments for LLMs"""
+        return TrainingArguments(
+            output_dir=output_dir,
+            overwrite_output_dir=True,
+            num_train_epochs=3,
+            per_device_train_batch_size=1,  # Small batch size per GPU
+            gradient_accumulation_steps=16,  # Effective batch size = 16
+            warmup_steps=100,
+            logging_steps=10,
+            save_steps=500,
+            eval_steps=500,
+            evaluation_strategy="steps",
+            save_strategy="steps",
+            load_best_model_at_end=True,
+            metric_for_best_model="eval_loss",
+            greater_is_better=False,
+            
+            # DeepSpeed integration
+            deepspeed=json.dumps(self.deepspeed_config),
+            fp16=True,
+            dataloader_pin_memory=False,  # Disable for DeepSpeed
+            
+            # Optimization settings
+            learning_rate=5e-5,
+            weight_decay=0.01,
+            adam_beta1=0.9,
+            adam_beta2=0.999,
+            adam_epsilon=1e-8,
+            max_grad_norm=1.0,
+            
+            # Logging and monitoring
+            logging_dir=f"{output_dir}/logs",
+            report_to=["tensorboard"],
+            run_name="llmops_training"
+        )
+    
+    def train_model(self, train_dataset, eval_dataset, output_dir: str):
+        """Execute distributed training with monitoring"""
+        try:
+            # Setup training arguments
+            training_args = self.create_training_arguments(output_dir)
+            
+            # Initialize trainer with DeepSpeed
+            trainer = Trainer(
+                model=self.model,
+                args=training_args,
+                train_dataset=train_dataset,
+                eval_dataset=eval_dataset,
+                tokenizer=self.tokenizer,
+                data_collator=self._data_collator
+            )
+            
+            # Start training with monitoring
+            print("Starting distributed training...")
+            trainer.train()
+            
+            # Save final model
+            trainer.save_model()
+            self.tokenizer.save_pretrained(output_dir)
+            
+            print("Training completed successfully!")
+            
+        except Exception as e:
+            print(f"Training failed: {str(e)}")
+            raise
+    
+    def _data_collator(self, examples):
+        """Custom data collator for causal language modeling"""
+        batch = self.tokenizer.pad(
+            examples,
+            padding=True,
+            max_length=512,
+            return_tensors="pt"
+        )
+        batch["labels"] = batch["input_ids"].clone()
+        return batch
+
+# Usage with multiple GPUs
+if __name__ == "__main__":
+    # Initialize distributed trainer
+    trainer = LLMOpsDistributedTrainer("gpt2")
+    
+    # Setup distributed environment
+    trainer.setup_distributed_training()
+    
+    # Load your datasets here
+    # train_dataset = YourDataset(...)
+    # eval_dataset = YourDataset(...)
+    
+    # Start distributed training
+    # trainer.train_model(train_dataset, eval_dataset, "./output")
+
+# Launch command:
+# deepspeed --num_gpus=4 train_llm.py
+`}
+                            </pre>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+
+                      {/* Example 3: Production Serving */}
+                      <Collapsible>
+                        <CollapsibleTrigger asChild>
+                          <Button variant="outline" className="w-full flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M13.5 3H12H8C6.34 3 5 4.34 5 6V18C5 19.66 6.34 21 8 21H16C17.66 21 19 19.66 19 18V8L13.5 3ZM16 18H8V6H12V9H16V18Z"/>
+                              </svg>
+                              <span>3. Production Serving with FastAPI & vLLM</span>
+                            </div>
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-4">
+                          <div className="bg-gray-900 rounded-lg p-4 border border-orange-300">
+                            <div className="flex items-center gap-2 mb-3">
+                              <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M13.5 3H12H8C6.34 3 5 4.34 5 6V18C5 19.66 6.34 21 8 21H16C17.66 21 19 19.66 19 18V8L13.5 3ZM16 18H8V6H12V9H16V18Z"/>
+                              </svg>
+                              <h4 className="text-orange-400 font-semibold">High-Performance Inference Server</h4>
+                            </div>
+                            <pre className="text-green-300 text-xs overflow-x-auto leading-relaxed">
+{`# LLMOps: Production-Ready Inference Server
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from pydantic import BaseModel, Field
+from vllm import LLM, SamplingParams
+import asyncio
+import time
+import logging
+from typing import List, Optional
+import prometheus_client
+from prometheus_client import Counter, Histogram, Gauge
+import uvicorn
+
+# Prometheus metrics for monitoring
+REQUEST_COUNT = Counter('llm_requests_total', 'Total LLM requests')
+REQUEST_DURATION = Histogram('llm_request_duration_seconds', 'LLM request duration')
+ACTIVE_REQUESTS = Gauge('llm_active_requests', 'Active LLM requests')
+GPU_MEMORY = Gauge('llm_gpu_memory_usage_bytes', 'GPU memory usage')
+
+# Request/Response models
+class GenerationRequest(BaseModel):
+    prompt: str = Field(..., max_length=2048)
+    max_tokens: int = Field(default=512, ge=1, le=2048)
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0)
+    top_p: float = Field(default=0.9, ge=0.0, le=1.0)
+    frequency_penalty: float = Field(default=0.0, ge=-2.0, le=2.0)
+    presence_penalty: float = Field(default=0.0, ge=-2.0, le=2.0)
+
+class GenerationResponse(BaseModel):
+    text: str
+    tokens_generated: int
+    generation_time: float
+    model_name: str
+
+class LLMOpsInferenceServer:
+    def __init__(self, model_name: str, tensor_parallel_size: int = 1):
+        self.model_name = model_name
+        self.tensor_parallel_size = tensor_parallel_size
+        self.llm = None
+        self.app = FastAPI(title="LLMOps Inference Server")
+        self.setup_routes()
+        
+    def initialize_model(self):
+        """Initialize vLLM engine for optimized inference"""
+        try:
+            logging.info(f"Loading model: {self.model_name}")
+            
+            self.llm = LLM(
+                model=self.model_name,
+                tensor_parallel_size=self.tensor_parallel_size,
+                gpu_memory_utilization=0.9,  # Use 90% of GPU memory
+                max_model_len=4096,  # Context length
+                dtype="float16",  # Use FP16 for efficiency
+                trust_remote_code=True,
+                enforce_eager=False,  # Enable CUDA graphs
+                max_num_batched_tokens=8192,  # Batch size optimization
+                max_num_seqs=256  # Maximum concurrent sequences
+            )
+            
+            logging.info("Model loaded successfully")
+            
+        except Exception as e:
+            logging.error(f"Failed to load model: {str(e)}")
+            raise
+    
+    def setup_routes(self):
+        """Setup FastAPI routes"""
+        
+        @self.app.on_event("startup")
+        async def startup_event():
+            self.initialize_model()
+        
+        @self.app.get("/health")
+        async def health_check():
+            return {"status": "healthy", "model": self.model_name}
+        
+        @self.app.get("/metrics")
+        async def metrics():
+            return prometheus_client.generate_latest()
+        
+        @self.app.post("/generate", response_model=GenerationResponse)
+        async def generate_text(
+            request: GenerationRequest,
+            background_tasks: BackgroundTasks
+        ):
+            return await self.generate_response(request, background_tasks)
+        
+        @self.app.post("/batch_generate")
+        async def batch_generate(
+            requests: List[GenerationRequest],
+            background_tasks: BackgroundTasks
+        ):
+            return await self.batch_generate_responses(requests, background_tasks)
+    
+    async def generate_response(
+        self, 
+        request: GenerationRequest, 
+        background_tasks: BackgroundTasks
+    ) -> GenerationResponse:
+        """Generate single response with monitoring"""
+        
+        REQUEST_COUNT.inc()
+        ACTIVE_REQUESTS.inc()
+        start_time = time.time()
+        
+        try:
+            # Validate input
+            if not request.prompt.strip():
+                raise HTTPException(status_code=400, detail="Empty prompt")
+            
+            # Configure sampling parameters
+            sampling_params = SamplingParams(
+                temperature=request.temperature,
+                top_p=request.top_p,
+                max_tokens=request.max_tokens,
+                frequency_penalty=request.frequency_penalty,
+                presence_penalty=request.presence_penalty,
+                use_beam_search=False,  # Faster than beam search
+                early_stopping=True
+            )
+            
+            # Generate response
+            outputs = self.llm.generate([request.prompt], sampling_params)
+            generated_text = outputs[0].outputs[0].text
+            
+            generation_time = time.time() - start_time
+            tokens_generated = len(outputs[0].outputs[0].token_ids)
+            
+            # Record metrics
+            REQUEST_DURATION.observe(generation_time)
+            
+            # Background task for cleanup/logging
+            background_tasks.add_task(self.log_request, request, generation_time)
+            
+            return GenerationResponse(
+                text=generated_text,
+                tokens_generated=tokens_generated,
+                generation_time=generation_time,
+                model_name=self.model_name
+            )
+            
+        except Exception as e:
+            logging.error(f"Generation failed: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
+        
+        finally:
+            ACTIVE_REQUESTS.dec()
+    
+    async def batch_generate_responses(
+        self, 
+        requests: List[GenerationRequest],
+        background_tasks: BackgroundTasks
+    ):
+        """Batch generation for improved throughput"""
+        
+        if len(requests) > 32:  # Limit batch size
+            raise HTTPException(status_code=400, detail="Batch size too large")
+        
+        start_time = time.time()
+        REQUEST_COUNT.inc(len(requests))
+        
+        try:
+            # Prepare batch
+            prompts = [req.prompt for req in requests]
+            sampling_params = SamplingParams(
+                temperature=requests[0].temperature,  # Use first request params
+                top_p=requests[0].top_p,
+                max_tokens=requests[0].max_tokens
+            )
+            
+            # Batch generation
+            outputs = self.llm.generate(prompts, sampling_params)
+            
+            # Format responses
+            responses = []
+            for i, output in enumerate(outputs):
+                responses.append(GenerationResponse(
+                    text=output.outputs[0].text,
+                    tokens_generated=len(output.outputs[0].token_ids),
+                    generation_time=time.time() - start_time,
+                    model_name=self.model_name
+                ))
+            
+            return {"responses": responses, "batch_size": len(requests)}
+            
+        except Exception as e:
+            logging.error(f"Batch generation failed: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
+    
+    async def log_request(self, request: GenerationRequest, generation_time: float):
+        """Background logging for analytics"""
+        log_data = {
+            "timestamp": time.time(),
+            "prompt_length": len(request.prompt),
+            "max_tokens": request.max_tokens,
+            "temperature": request.temperature,
+            "generation_time": generation_time,
+            "model": self.model_name
+        }
+        logging.info(f"Request logged: {log_data}")
+
+# Production deployment
+if __name__ == "__main__":
+    # Configure logging
+    logging.basicConfig(level=logging.INFO)
+    
+    # Initialize server
+    server = LLMOpsInferenceServer(
+        model_name="microsoft/DialoGPT-medium",
+        tensor_parallel_size=1  # Adjust based on available GPUs
+    )
+    
+    # Run server
+    uvicorn.run(
+        server.app,
+        host="0.0.0.0",
+        port=8000,
+        workers=1,  # Single worker for GPU models
+        log_level="info",
+        access_log=True
+    )
+
+# Docker deployment command:
+# docker run -p 8000:8000 --gpus all llmops-server:latest
+`}
+                            </pre>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
+                  </div>
+
+                  {/* LLMOps Tools and Frameworks */}
+                  <div className="bg-white/60 rounded-lg border border-orange-200 p-4">
+                    <h4 className="font-semibold text-orange-900 mb-3 flex items-center gap-2">
+                      <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                      Popular LLMOps Tools & Frameworks
+                    </h4>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <h5 className="font-semibold text-orange-800 text-sm">Training & Fine-tuning</h5>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Transformers</span>
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">DeepSpeed</span>
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">PEFT (LoRA)</span>
+                          <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded text-xs">Axolotl</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <h5 className="font-semibold text-orange-800 text-sm">Inference & Serving</h5>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">vLLM</span>
+                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">TensorRT-LLM</span>
+                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Text Generation Inference</span>
+                          <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">Ollama</span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <h5 className="font-semibold text-orange-800 text-sm">Monitoring & Evaluation</h5>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Weights & Biases</span>
+                          <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">LangSmith</span>
+                          <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Phoenix</span>
+                          <span className="px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">Arize AI</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
         )}
 
         </div>

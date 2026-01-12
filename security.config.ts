@@ -61,6 +61,54 @@ export const securityConfig = {
     allowedCharacters: /^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"'@#$%^&*+=<>\/\\|`~]*$/,
     sanitizeHtml: true,
     preventXSS: true
+  },
+
+  // Content Protection
+  contentProtection: {
+    disableRightClick: true,
+    disableTextSelection: true,
+    disableDragDrop: true,
+    disablePrintScreen: true,
+    disableDevTools: true,
+    addWatermark: true,
+    preventCopy: true,
+    preventSave: true
+  },
+
+  // Anti-Scraping Protection
+  antiScraping: {
+    enableBotDetection: true,
+    humanVerificationThreshold: 0.1, // Human interaction score threshold
+    monitoringInterval: 30000, // 30 seconds
+    maxSuspiciousActivity: 5,
+    enableCaptcha: true
+  },
+
+  // Iframe Protection
+  iframeProtection: {
+    preventEmbedding: true,
+    authorizedDomains: ['localhost', 'your-domain.com'],
+    blockCrossOrigin: true,
+    redirectToSource: true
+  },
+
+  // Activity Monitoring
+  activityMonitoring: {
+    trackMouseMovements: true,
+    trackKeystrokes: true,
+    trackScrollEvents: true,
+    detectDevTools: true,
+    detectRapidClicks: true,
+    rapidClickThreshold: 10,
+    monitorApiRequests: true
+  },
+
+  // Anti-Forgery Protection
+  antiForgery: {
+    tokenLength: 32,
+    tokenExpiry: 300000, // 5 minutes
+    rotateTokens: true,
+    validateOnSubmit: true
   }
 } as const;
 

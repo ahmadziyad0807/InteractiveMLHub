@@ -44,24 +44,48 @@ interface AlgorithmResult {
   performanceData?: Array<{ epoch: number; accuracy: number; loss: number }>;
 }
 
-// Tooltip component for code explanations
+// Mobile-friendly tooltip component for code explanations
 const CodeTooltip = ({ children, explanation }: { children: React.ReactNode; explanation: string }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  const handleInteraction = () => {
+    if (isMobile) {
+      setIsVisible(!isVisible);
+    }
+  };
   
   return (
     <span className="relative inline-block">
       <span 
-        className="cursor-help hover:bg-blue-100 hover:text-blue-800 rounded px-1 transition-colors duration-200"
-        onMouseEnter={() => setIsVisible(true)}
-        onMouseLeave={() => setIsVisible(false)}
+        className="cursor-help hover:bg-blue-100 hover:text-blue-800 rounded px-1 transition-colors duration-200 touch-manipulation"
+        onMouseEnter={() => !isMobile && setIsVisible(true)}
+        onMouseLeave={() => !isMobile && setIsVisible(false)}
+        onClick={handleInteraction}
+        onTouchStart={handleInteraction}
       >
         {children}
       </span>
       {isVisible && (
-        <div className="absolute z-50 bottom-full left-0 mb-2 w-80 p-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg">
+        <div className={`absolute z-50 ${isMobile ? 'bottom-full left-1/2 transform -translate-x-1/2' : 'bottom-full left-0'} mb-2 ${isMobile ? 'w-72' : 'w-80'} p-3 bg-gray-900 text-white text-sm rounded-lg shadow-lg`}>
           <div className="relative">
             {explanation}
-            <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+            {isMobile && (
+              <button 
+                onClick={() => setIsVisible(false)}
+                className="absolute top-0 right-0 text-gray-400 hover:text-white"
+              >
+                ×
+              </button>
+            )}
+            <div className={`absolute top-full ${isMobile ? 'left-1/2 transform -translate-x-1/2' : 'left-4'} w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900`}></div>
           </div>
         </div>
       )}
@@ -69,24 +93,48 @@ const CodeTooltip = ({ children, explanation }: { children: React.ReactNode; exp
   );
 };
 
-// ML Term tooltip component
+// Mobile-friendly ML Term tooltip component
 const MLTermTooltip = ({ term, definition }: { term: string; definition: string }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  const handleInteraction = () => {
+    if (isMobile) {
+      setIsVisible(!isVisible);
+    }
+  };
   
   return (
     <span className="relative inline-block">
       <span 
-        className="cursor-help text-blue-600 hover:text-blue-800 underline decoration-dotted transition-colors duration-200"
-        onMouseEnter={() => setIsVisible(true)}
-        onMouseLeave={() => setIsVisible(false)}
+        className="cursor-help text-blue-600 hover:text-blue-800 underline decoration-dotted transition-colors duration-200 touch-manipulation"
+        onMouseEnter={() => !isMobile && setIsVisible(true)}
+        onMouseLeave={() => !isMobile && setIsVisible(false)}
+        onClick={handleInteraction}
+        onTouchStart={handleInteraction}
       >
         {term}
       </span>
       {isVisible && (
-        <div className="absolute z-50 bottom-full left-0 mb-2 w-72 p-3 bg-blue-900 text-white text-sm rounded-lg shadow-lg">
+        <div className={`absolute z-50 ${isMobile ? 'bottom-full left-1/2 transform -translate-x-1/2' : 'bottom-full left-0'} mb-2 ${isMobile ? 'w-64' : 'w-72'} p-3 bg-blue-900 text-white text-sm rounded-lg shadow-lg`}>
           <div className="relative">
             <strong className="text-blue-200">{term}:</strong> {definition}
-            <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-blue-900"></div>
+            {isMobile && (
+              <button 
+                onClick={() => setIsVisible(false)}
+                className="absolute top-0 right-0 text-blue-400 hover:text-white"
+              >
+                ×
+              </button>
+            )}
+            <div className={`absolute top-full ${isMobile ? 'left-1/2 transform -translate-x-1/2' : 'left-4'} w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-blue-900`}></div>
           </div>
         </div>
       )}
@@ -184,6 +232,16 @@ export const MLShowcase = () => {
   // Collapsible state for LLMOps section - controlled by navigation
   const [llmopsOpen, setLlmopsOpen] = useState(activeNavItem === 'llmops');
 
+  // Security status state
+  const [securityInitialized, setSecurityInitialized] = useState(false);
+
+  // Mobile navigation state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Collapsible state for Protocols section - controlled by navigation
+  const [protocolsOpen, setProtocolsOpen] = useState(activeNavItem === 'protocols');
+
   // Collapsible states for MLOps sub-sections - Hidden for future use
   // const [mlopsCodeOpen, setMlopsCodeOpen] = useState({
   //   cicd: false,
@@ -202,6 +260,33 @@ export const MLShowcase = () => {
 
   // Handle navigation changes to control section visibility
   useEffect(() => {
+    // Initialize security measures
+    try {
+      SecurityUtils.initializeSecurity();
+      setSecurityInitialized(true);
+      console.log('🔒 Security measures activated');
+    } catch (error) {
+      console.error('Security initialization failed:', error);
+    }
+
+    // Check if device is mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    // Close mobile menu when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isMobileMenuOpen && !target.closest('.mobile-menu') && !target.closest('.mobile-menu-button')) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+
     // Update section visibility based on active navigation item
     setMlPipelinesOpen(activeNavItem === 'pipelines');
     setMlProductionPipelinesOpen(activeNavItem === 'pipelines');
@@ -217,6 +302,15 @@ export const MLShowcase = () => {
     setChatbotOpen(activeNavItem === 'chatbot');
     setMlopsOpen(activeNavItem === 'mlops');
     setLlmopsOpen(activeNavItem === 'llmops');
+    setProtocolsOpen(activeNavItem === 'protocols');
+    
+    // Close mobile menu when navigation changes
+    setIsMobileMenuOpen(false);
+    
+    return () => {
+      window.removeEventListener('resize', () => {});
+      document.removeEventListener('click', () => {});
+    };
   }, [activeNavItem]);
 
   // Secure search handler
@@ -643,24 +737,46 @@ export const MLShowcase = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-100">
-      {/* Enhanced Header with Navigation */}
+      {/* Enhanced Mobile-Friendly Header with Navigation */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-blue-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4">
           {/* Top Header Bar */}
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between py-3 md:py-4">
             {/* Logo and Title */}
-            <div className="flex items-center gap-3">
-              <Brain className="h-10 w-10 text-blue-600" />
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+              <Brain className="h-8 w-8 md:h-10 md:w-10 text-blue-600 flex-shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent truncate">
                   Interactive AL ML Learning Hub
                 </h1>
-                <p className="text-xs text-gray-600">Explore • Learn • Implement</p>
+                <p className="text-xs text-gray-600 hidden sm:block">Explore • Learn • Implement</p>
               </div>
             </div>
 
-            {/* Search and Actions */}
-            <div className="flex items-center gap-4">
+            {/* Mobile Menu Button */}
+            <div className="flex items-center gap-2 md:hidden">
+              {/* Security Status Indicator - Mobile */}
+              <div className="flex items-center gap-1">
+                <div className={`w-2 h-2 rounded-full ${securityInitialized ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+              </div>
+              
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="mobile-menu-button p-2 text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                aria-label="Toggle mobile menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+
+            {/* Desktop Search and Actions */}
+            <div className="hidden md:flex items-center gap-4">
               {/* Search Field */}
               <div className="relative">
                 <button
@@ -703,20 +819,153 @@ export const MLShowcase = () => {
                 )}
               </div>
 
-              {/* CTA Button */}
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg">
-                Get Started
-              </button>
+              {/* Security Status & CTA Button */}
+              <div className="flex items-center gap-3">
+                {/* Security Status Indicator */}
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${securityInitialized ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+                  <span className="text-xs text-gray-600 hidden lg:block">
+                    {securityInitialized ? 'Secure' : 'Loading...'}
+                  </span>
+                </div>
+
+                {/* CTA Button */}
+                <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                  Get Started
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="border-t border-gray-100">
-            <div className="flex items-center justify-between py-3">
-              <div className="flex items-center space-x-8">
+          {/* Mobile Navigation Menu */}
+          {isMobileMenuOpen && (
+            <div className="mobile-menu md:hidden border-t border-gray-100 py-4 bg-white/95 backdrop-blur-sm">
+              {/* Mobile Search */}
+              <div className="mb-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Mobile Navigation Links */}
+              <div className="space-y-2">
                 <button
                   onClick={() => setActiveNavItem('home')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'home' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  🏠 Home
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('algorithms')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'algorithms' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  📊 ML Algorithms
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('pipelines')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'pipelines' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  🔧 ML Pipelines
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('rag')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'rag' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  ⭐ RAG Systems
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('chatbot')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'chatbot' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  💬 AI Chatbot
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('mlops')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'mlops' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  🛡️ MLOps
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('llmops')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'llmops' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  💡 LLMOps
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('protocols')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'protocols' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  📋 Protocols
+                </button>
+                <button
+                  onClick={() => setActiveNavItem('resources')}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 ${
+                    activeNavItem === 'resources' 
+                      ? 'bg-blue-100 text-blue-600 font-medium' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  📚 Resources
+                </button>
+              </div>
+
+              {/* Mobile CTA Button */}
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                  Get Started
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Desktop Navigation Menu */}
+          <nav className="hidden md:block border-t border-gray-100">
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center space-x-6 lg:space-x-8 overflow-x-auto">
+                <button
+                  onClick={() => setActiveNavItem('home')}
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'home' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -726,7 +975,7 @@ export const MLShowcase = () => {
                 </button>
                 <button
                   onClick={() => setActiveNavItem('algorithms')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'algorithms' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -736,7 +985,7 @@ export const MLShowcase = () => {
                 </button>
                 <button
                   onClick={() => setActiveNavItem('pipelines')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'pipelines' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -746,7 +995,7 @@ export const MLShowcase = () => {
                 </button>
                 <button
                   onClick={() => setActiveNavItem('rag')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'rag' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -756,7 +1005,7 @@ export const MLShowcase = () => {
                 </button>
                 <button
                   onClick={() => setActiveNavItem('chatbot')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'chatbot' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -766,7 +1015,7 @@ export const MLShowcase = () => {
                 </button>
                 <button
                   onClick={() => setActiveNavItem('mlops')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'mlops' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -776,7 +1025,7 @@ export const MLShowcase = () => {
                 </button>
                 <button
                   onClick={() => setActiveNavItem('llmops')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'llmops' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -785,8 +1034,18 @@ export const MLShowcase = () => {
                   LLMOps
                 </button>
                 <button
+                  onClick={() => setActiveNavItem('protocols')}
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
+                    activeNavItem === 'protocols' 
+                      ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
+                      : 'text-gray-600 hover:text-blue-600'
+                  }`}
+                >
+                  Protocols & Integration
+                </button>
+                <button
                   onClick={() => setActiveNavItem('resources')}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 whitespace-nowrap ${
                     activeNavItem === 'resources' 
                       ? 'text-blue-600 border-b-2 border-blue-600 pb-1' 
                       : 'text-gray-600 hover:text-blue-600'
@@ -797,7 +1056,7 @@ export const MLShowcase = () => {
               </div>
 
               {/* Breadcrumbs */}
-              <div className="flex items-center text-xs text-gray-500">
+              <div className="hidden lg:flex items-center text-xs text-gray-500">
                 <span>Home</span>
                 <svg className="w-3 h-3 mx-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -810,6 +1069,7 @@ export const MLShowcase = () => {
                   {activeNavItem === 'chatbot' && 'AI Chatbot'}
                   {activeNavItem === 'mlops' && 'MLOps'}
                   {activeNavItem === 'llmops' && 'LLMOps'}
+                  {activeNavItem === 'protocols' && 'Protocols & Integration'}
                   {activeNavItem === 'resources' && 'Resources'}
                 </span>
               </div>
@@ -819,40 +1079,40 @@ export const MLShowcase = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto p-4">
-        <div className="space-y-6">
+      <main className="max-w-7xl mx-auto p-2 sm:p-4">
+        <div className="space-y-4 sm:space-y-6">
         
         {/* Home/Landing Page - Show when home nav is active */}
         {activeNavItem === 'home' && (
-          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-3">
+          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-3 sm:p-6">
             {/* Hero Section */}
-            <div className="text-center mb-4">
-              <div className="flex justify-center mb-2">
-                <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-md">
-                  <Brain className="h-6 w-6 text-white" />
+            <div className="text-center mb-4 sm:mb-6">
+              <div className="flex justify-center mb-2 sm:mb-4">
+                <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full shadow-md">
+                  <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                 </div>
               </div>
               
-              <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2 sm:mb-3">
                 Interactive AL ML Learning Hub
               </h1>
               
-              <p className="text-sm text-gray-700 mb-3 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base text-gray-700 mb-3 sm:mb-4 max-w-2xl mx-auto px-2">
                 Your platform for exploring 
                 <span className="font-semibold text-blue-600"> AI</span> and 
                 <span className="font-semibold text-purple-600"> ML</span> technologies
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-2 justify-center items-center mb-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-center mb-4 sm:mb-6 px-4">
                 <button 
                   onClick={() => setActiveNavItem('algorithms')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
                   Start Learning
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('pipelines')}
-                  className="border-2 border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
+                  className="w-full sm:w-auto border-2 border-blue-600 text-blue-600 px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold hover:bg-blue-600 hover:text-white transition-all duration-200"
                 >
                   Explore Pipelines
                 </button>
@@ -860,24 +1120,24 @@ export const MLShowcase = () => {
             </div>
 
             {/* Features Overview */}
-            <div className="mb-4">
-              <h2 className="text-lg font-bold text-center text-gray-800 mb-3">
+            <div className="mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-center text-gray-800 mb-3 sm:mb-4">
                 🚀 What You'll Discover
               </h2>
               
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                 {/* ML Algorithms Card */}
                 <div 
                   onClick={() => setActiveNavItem('algorithms')}
-                  className="bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-indigo-100 to-purple-100 border border-indigo-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-indigo-600 rounded">
-                      <BarChart3 className="h-3 w-3 text-white" />
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-indigo-600 rounded flex-shrink-0">
+                      <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                     </div>
-                    <h3 className="text-sm font-bold text-indigo-900">ML Algorithms</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-indigo-900 truncate">ML Algorithms</h3>
                   </div>
-                  <p className="text-indigo-700 text-xs mb-2">
+                  <p className="text-indigo-700 text-xs mb-2 line-clamp-2">
                     Interactive exploration of 5 ML algorithms.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -889,15 +1149,15 @@ export const MLShowcase = () => {
                 {/* ML Pipelines Card */}
                 <div 
                   onClick={() => setActiveNavItem('pipelines')}
-                  className="bg-gradient-to-br from-emerald-100 to-teal-100 border border-emerald-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-emerald-100 to-teal-100 border border-emerald-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-emerald-600 rounded">
-                      <Settings className="h-3 w-3 text-white" />
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-emerald-600 rounded flex-shrink-0">
+                      <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                     </div>
-                    <h3 className="text-sm font-bold text-emerald-900">ML Pipelines</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-emerald-900 truncate">ML Pipelines</h3>
                   </div>
-                  <p className="text-emerald-700 text-xs mb-2">
+                  <p className="text-emerald-700 text-xs mb-2 line-clamp-2">
                     End-to-end ML workflows.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -909,17 +1169,17 @@ export const MLShowcase = () => {
                 {/* RAG Systems Card */}
                 <div 
                   onClick={() => setActiveNavItem('rag')}
-                  className="bg-gradient-to-br from-teal-100 to-cyan-100 border border-teal-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-teal-100 to-cyan-100 border border-teal-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-teal-600 rounded">
-                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-teal-600 rounded flex-shrink-0">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                       </svg>
                     </div>
-                    <h3 className="text-sm font-bold text-teal-900">RAG Systems</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-teal-900 truncate">RAG Systems</h3>
                   </div>
-                  <p className="text-teal-700 text-xs mb-2">
+                  <p className="text-teal-700 text-xs mb-2 line-clamp-2">
                     Retrieval-Augmented Generation.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -931,17 +1191,17 @@ export const MLShowcase = () => {
                 {/* AI Chatbot Card */}
                 <div 
                   onClick={() => setActiveNavItem('chatbot')}
-                  className="bg-gradient-to-br from-green-100 to-emerald-100 border border-green-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-green-100 to-emerald-100 border border-green-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-green-600 rounded">
-                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-green-600 rounded flex-shrink-0">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                       </svg>
                     </div>
-                    <h3 className="text-sm font-bold text-green-900">AI Chatbot</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-green-900 truncate">AI Chatbot</h3>
                   </div>
-                  <p className="text-green-700 text-xs mb-2">
+                  <p className="text-green-700 text-xs mb-2 line-clamp-2">
                     Build conversational AI systems.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -953,17 +1213,17 @@ export const MLShowcase = () => {
                 {/* MLOps Card */}
                 <div 
                   onClick={() => setActiveNavItem('mlops')}
-                  className="bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-purple-100 to-indigo-100 border border-purple-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-purple-600 rounded">
-                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-purple-600 rounded flex-shrink-0">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
                       </svg>
                     </div>
-                    <h3 className="text-sm font-bold text-purple-900">MLOps</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-purple-900 truncate">MLOps</h3>
                   </div>
-                  <p className="text-purple-700 text-xs mb-2">
+                  <p className="text-purple-700 text-xs mb-2 line-clamp-2">
                     ML lifecycle management.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -975,17 +1235,17 @@ export const MLShowcase = () => {
                 {/* LLMOps Card */}
                 <div 
                   onClick={() => setActiveNavItem('llmops')}
-                  className="bg-gradient-to-br from-orange-100 to-red-100 border border-orange-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-orange-100 to-red-100 border border-orange-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-orange-600 rounded">
-                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-orange-600 rounded flex-shrink-0">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                       </svg>
                     </div>
-                    <h3 className="text-sm font-bold text-orange-900">LLMOps</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-orange-900 truncate">LLMOps</h3>
                   </div>
-                  <p className="text-orange-700 text-xs mb-2">
+                  <p className="text-orange-700 text-xs mb-2 line-clamp-2">
                     Large Language Model Operations.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -994,20 +1254,42 @@ export const MLShowcase = () => {
                   </div>
                 </div>
 
+                {/* Protocols & Integration Card */}
+                <div 
+                  onClick={() => setActiveNavItem('protocols')}
+                  className="bg-gradient-to-br from-pink-100 to-rose-100 border border-pink-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                >
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-pink-600 rounded flex-shrink-0">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="text-xs sm:text-sm font-bold text-pink-900 truncate">Protocols</h3>
+                  </div>
+                  <p className="text-pink-700 text-xs mb-2 line-clamp-2">
+                    MCP & A2A communication protocols.
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="px-1 py-0.5 bg-pink-200 text-pink-800 rounded text-xs">MCP</span>
+                    <span className="px-1 py-0.5 bg-pink-200 text-pink-800 rounded text-xs">A2A</span>
+                  </div>
+                </div>
+
                 {/* Resources Card */}
                 <div 
                   onClick={() => setActiveNavItem('resources')}
-                  className="bg-gradient-to-br from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+                  className="bg-gradient-to-br from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-2 sm:p-3 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
                 >
-                  <div className="flex items-center gap-1 mb-2">
-                    <div className="p-1 bg-gray-600 rounded">
-                      <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center gap-1 sm:gap-2 mb-2">
+                    <div className="p-1 bg-gray-600 rounded flex-shrink-0">
+                      <svg className="h-3 w-3 sm:h-4 sm:w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                       </svg>
                     </div>
-                    <h3 className="text-sm font-bold text-gray-900">Resources</h3>
+                    <h3 className="text-xs sm:text-sm font-bold text-gray-900 truncate">Resources</h3>
                   </div>
-                  <p className="text-gray-700 text-xs mb-2">
+                  <p className="text-gray-700 text-xs mb-2 line-clamp-2">
                     Learning materials & docs.
                   </p>
                   <div className="flex flex-wrap gap-1">
@@ -1019,79 +1301,85 @@ export const MLShowcase = () => {
             </div>
 
             {/* Key Features - Compact */}
-            <div className="mb-3">
-              <h2 className="text-md font-bold text-center text-gray-800 mb-2">
+            <div className="mb-3 sm:mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-center text-gray-800 mb-2 sm:mb-3">
                 ✨ Platform Features
               </h2>
               
-              <div className="grid grid-cols-4 gap-2">
-                <div className="text-center p-2 bg-white/70 rounded-lg border border-blue-200">
-                  <div className="p-1 bg-blue-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
-                    <Play className="h-3 w-3 text-blue-600" />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <div className="text-center p-2 sm:p-3 bg-white/70 rounded-lg border border-blue-200">
+                  <div className="p-1 bg-blue-100 rounded-full w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+                    <Play className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                   </div>
-                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Interactive</h3>
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-800 mb-0.5">Interactive</h3>
                   <p className="text-gray-600 text-xs">Real-time</p>
                 </div>
                 
-                <div className="text-center p-2 bg-white/70 rounded-lg border border-green-200">
-                  <div className="p-1 bg-green-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
-                    <Code2 className="h-3 w-3 text-green-600" />
+                <div className="text-center p-2 sm:p-3 bg-white/70 rounded-lg border border-green-200">
+                  <div className="p-1 bg-green-100 rounded-full w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+                    <Code2 className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                   </div>
-                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Production</h3>
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-800 mb-0.5">Production</h3>
                   <p className="text-gray-600 text-xs">Ready-to-use</p>
                 </div>
                 
-                <div className="text-center p-2 bg-white/70 rounded-lg border border-purple-200">
-                  <div className="p-1 bg-purple-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
-                    <BarChart3 className="h-3 w-3 text-purple-600" />
+                <div className="text-center p-2 sm:p-3 bg-white/70 rounded-lg border border-purple-200">
+                  <div className="p-1 bg-purple-100 rounded-full w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+                    <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600" />
                   </div>
-                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Charts</h3>
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-800 mb-0.5">Charts</h3>
                   <p className="text-gray-600 text-xs">Interactive</p>
                 </div>
                 
-                <div className="text-center p-2 bg-white/70 rounded-lg border border-orange-200">
-                  <div className="p-1 bg-orange-100 rounded-full w-6 h-6 mx-auto mb-1 flex items-center justify-center">
-                    <CheckCircle2 className="h-3 w-3 text-orange-600" />
+                <div className="text-center p-2 sm:p-3 bg-white/70 rounded-lg border border-orange-200">
+                  <div className="p-1 bg-orange-100 rounded-full w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 flex items-center justify-center">
+                    <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-orange-600" />
                   </div>
-                  <h3 className="text-xs font-semibold text-gray-800 mb-0.5">Best Practices</h3>
+                  <h3 className="text-xs sm:text-sm font-semibold text-gray-800 mb-0.5">Best Practices</h3>
                   <p className="text-gray-600 text-xs">Industry</p>
                 </div>
               </div>
             </div>
 
             {/* Getting Started - Compact */}
-            <div className="bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300 rounded-lg p-3 text-center">
-              <h2 className="text-md font-bold text-gray-800 mb-1">
+            <div className="bg-gradient-to-r from-blue-100 to-purple-100 border border-blue-300 rounded-lg p-3 sm:p-4 text-center">
+              <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-1 sm:mb-2">
                 🎯 Ready to Start?
               </h2>
-              <p className="text-xs text-gray-700 mb-2">
+              <p className="text-xs sm:text-sm text-gray-700 mb-2 sm:mb-3">
                 Choose your learning path and start exploring AI/ML technologies.
               </p>
               
-              <div className="flex flex-wrap gap-1 justify-center">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-1 sm:gap-2 justify-center">
                 <button 
                   onClick={() => setActiveNavItem('algorithms')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-2 sm:px-3 py-1 sm:py-2 rounded text-xs sm:text-sm font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
                 >
                   ML Algorithms
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('chatbot')}
-                  className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-2 sm:px-3 py-1 sm:py-2 rounded text-xs sm:text-sm font-semibold hover:from-green-700 hover:to-teal-700 transition-all duration-200"
                 >
                   AI Chatbots
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('mlops')}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-2 sm:px-3 py-1 sm:py-2 rounded text-xs sm:text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200"
                 >
                   MLOps
                 </button>
                 <button 
                   onClick={() => setActiveNavItem('llmops')}
-                  className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-1 rounded text-xs font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-200"
+                  className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-2 sm:px-3 py-1 sm:py-2 rounded text-xs sm:text-sm font-semibold hover:from-orange-700 hover:to-red-700 transition-all duration-200"
                 >
                   LLMOps
+                </button>
+                <button 
+                  onClick={() => setActiveNavItem('protocols')}
+                  className="bg-gradient-to-r from-pink-600 to-rose-600 text-white px-2 sm:px-3 py-1 sm:py-2 rounded text-xs sm:text-sm font-semibold hover:from-pink-700 hover:to-rose-700 transition-all duration-200 col-span-2 sm:col-span-1"
+                >
+                  Protocols
                 </button>
               </div>
             </div>

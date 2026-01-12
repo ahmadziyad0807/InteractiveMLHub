@@ -237,10 +237,6 @@ export const MLShowcase = () => {
 
   // Mobile navigation state
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Collapsible state for Protocols section - controlled by navigation
-  const [protocolsOpen, setProtocolsOpen] = useState(activeNavItem === 'protocols');
 
   // Collapsible states for MLOps sub-sections - Hidden for future use
   // const [mlopsCodeOpen, setMlopsCodeOpen] = useState({
@@ -269,9 +265,10 @@ export const MLShowcase = () => {
       console.error('Security initialization failed:', error);
     }
 
-    // Check if device is mobile
+    // Check if device is mobile for future use
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      // Mobile detection logic - currently used for resize event setup
+      window.innerWidth < 768; // Mobile breakpoint
     };
     
     checkMobile();
@@ -302,7 +299,6 @@ export const MLShowcase = () => {
     setChatbotOpen(activeNavItem === 'chatbot');
     setMlopsOpen(activeNavItem === 'mlops');
     setLlmopsOpen(activeNavItem === 'llmops');
-    setProtocolsOpen(activeNavItem === 'protocols');
     
     // Close mobile menu when navigation changes
     setIsMobileMenuOpen(false);

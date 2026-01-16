@@ -417,6 +417,7 @@ export class SecurityUtils {
    */
   static showHumanVerification(): void {
     const overlay = document.createElement('div');
+    overlay.id = 'human-verification-overlay';
     overlay.style.cssText = `
       position: fixed;
       top: 0;
@@ -442,9 +443,9 @@ export class SecurityUtils {
         text-align: center;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
       ">
-        <h3>Human Verification Required</h3>
-        <p>Please solve this simple math problem to continue:</p>
-        <p style="font-size: 24px; margin: 20px 0;">What is ${Math.floor(challenge/2)} + ${Math.ceil(challenge/2)}?</p>
+        <h3 style="margin-top: 0; color: #333;">Human Verification Required</h3>
+        <p style="color: #666;">Please solve this simple math problem to continue:</p>
+        <p style="font-size: 24px; margin: 20px 0; font-weight: bold; color: #333;">What is ${Math.floor(challenge/2)} + ${Math.ceil(challenge/2)}?</p>
         <input type="number" id="verification-answer" style="
           padding: 10px;
           border: 2px solid #ddd;
@@ -452,9 +453,9 @@ export class SecurityUtils {
           font-size: 16px;
           width: 100px;
           text-align: center;
-        ">
+        " placeholder="Answer">
         <br><br>
-        <button onclick="SecurityUtils.verifyHuman(${answer})" style="
+        <button id="verify-button" style="
           background: #007bff;
           color: white;
           border: none;
@@ -462,31 +463,93 @@ export class SecurityUtils {
           border-radius: 5px;
           cursor: pointer;
           font-size: 16px;
-        ">Verify</button>
+          transition: background 0.3s;
+        " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">Verify</button>
       </div>
     `;
 
     document.body.appendChild(overlay);
+
+    // Add event listener to verify button
+    const verifyButton = document.getElementById('verify-button');
+    const answerInput = document.getElementById('verification-answer') as HTMLInputElement;
+
+    if (verifyButton && answerInput) {
+      // Handle button click
+      verifyButton.addEventListener('click', () => {
+        this.verifyHuman(answer, overlay);
+      });
+
+      // Handle Enter key press
+      answerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          this.verifyHuman(answer, overlay);
+        }
+      });
+
+      // Focus on input
+      answerInput.focus();
+    }
   }
 
   /**
    * Verify human challenge response
    */
-  static verifyHuman(correctAnswer: number): void {
+  static verifyHuman(correctAnswer: number, overlay: HTMLElement): void {
     const input = document.getElementById('verification-answer') as HTMLInputElement;
     const userAnswer = parseInt(input?.value || '0');
 
     if (userAnswer === correctAnswer) {
       // Remove verification overlay
-      const overlay = input?.closest('[style*="position: fixed"]') as HTMLElement;
-      overlay?.remove();
+      overlay.remove();
       
       // Mark as verified for this session
       sessionStorage.setItem('human_verified', 'true');
+      
+      // Show success message briefly
+      const successMsg = document.createElement('div');
+      successMsg.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        z-index: 10001;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      `;
+      successMsg.textContent = '✓ Verification successful!';
+      document.body.appendChild(successMsg);
+      
+      setTimeout(() => successMsg.remove(), 3000);
     } else {
-      alert('Incorrect answer. Please try again.');
+      // Show error message
+      const errorMsg = document.createElement('div');
+      errorMsg.style.cssText = `
+        color: #dc3545;
+        margin-top: 10px;
+        font-size: 14px;
+      `;
+      errorMsg.textContent = 'Incorrect answer. Please try again.';
+      
+      // Remove any existing error message
+      const existingError = input.parentElement?.querySelector('[style*="color: #dc3545"]');
+      existingError?.remove();
+      
+      // Add new error message
+      input.parentElement?.appendChild(errorMsg);
+      
+      // Clear input and focus
       input.value = '';
       input.focus();
+      
+      // Shake animation
+      input.style.animation = 'shake 0.5s';
+      setTimeout(() => {
+        input.style.animation = '';
+      }, 500);
     }
   }
 
